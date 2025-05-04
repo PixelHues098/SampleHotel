@@ -1,0 +1,26 @@
+CORE FEATURES:
+
+1. LOGIN AND REGISTER PAGE - (add confirm password and show password) - DONE
+2. CUSTOMERS CAN VIEW AVAILABLE ROOMS AND PRICES - AVAILABILITY TAG EACH PACKAGE (AVAILABLE/NOT AVAILABLE) (booking confirmation/validation) (date validation, cant leave before arrival date) - DONE
+3. CUSTOMERS CAN MAKE PAYMENTS ONLINE - TRYING TO USE GCASH API OR MAYA API (add in the receipt form a discount textfield)
+4. ADMIN CAN MANAGE ROOMS AND SERVICE DETAILS - NEED TO CREATE ADMIN PAGE (pagination and search filter) - DONE
+5. ADMINS CAN VIEW AND UPDATE BOOKING STATUS - NEED TO CREATE ADMIN PAGE - DONE
+6. CALENDAR FOR ROOM AVAILABILITY - WILL SEARCH FOR THIS. - DONE
+7. ADMIN PAGE SHOULD HAVE SECTIONS (USER, BOOKING, PACKAGE) - DONE
+
+BONUS FEATURE:
+
+1. 50% DISCOUNT WHEN YOU ENTERED THE VOUCHER "CASARELAX"
+
+DATABASE TABLES:
+
+1. users (name, email, password, created_at) - DONE
+2. booking (user_id, phone, address, package, guests, arrivals, leaving, created_at) - DONE
+3. packages (package_name, description, price, availability) - this is where the availability will be referenced from and the edit/delete of the admins (DATABASE IS DONE, ADMIN DASHBOARD WIP) - DONE
+4. admin (username, password, created_at) - DONE
+
+THINGS LEFT TO DO:
+
+1. PAYMENT FORM WITH 3 PAYMENT METHODS (MAYA, GCASH, GOTYME)
+2. DISCOUNT VOUCHER
+3. SHOW AND CONFIRM PASSWORD ON BOTH USER AND ADMIN DASHBOARD LOGINS - DONE
