@@ -8,7 +8,7 @@ $query = "SELECT package_name, description, price, availability FROM packages";
 $result = mysqli_query($connection, $query);
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $packages[] = $row; // Store all package data
+   $packages[] = $row; // Store all package data
 }
 
 // Fetch package availability separately if needed
@@ -16,7 +16,7 @@ $packageAvailability = [];
 $availabilityQuery = "SELECT package_name, availability FROM packages";
 $availabilityResult = mysqli_query($connection, $availabilityQuery);
 while ($row = mysqli_fetch_assoc($availabilityResult)) {
-    $packageAvailability[$row['package_name']] = $row['availability'];
+   $packageAvailability[$row['package_name']] = $row['availability'];
 }
 ?>
 
@@ -39,27 +39,29 @@ while ($row = mysqli_fetch_assoc($availabilityResult)) {
    <link rel="stylesheet" href="css/style.css">
 
    <style>
-   .btn-disabled {
-      background-color: #cccccc !important;
-      cursor: not-allowed !important;
-      pointer-events: none !important;
-      opacity: 0.7;
-   }
-   .availed-message {
-      color: #ff0000;
-      font-weight: bold;
-      margin-top: 15px;
-      font-size: 14px;
-      text-align: center;
-      padding: 5px 0;
-   }
-   .btn-center {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-   }
-</style>
+      .btn-disabled {
+         background-color: #cccccc !important;
+         cursor: not-allowed !important;
+         pointer-events: none !important;
+         opacity: 0.7;
+      }
+
+      .availed-message {
+         color: #ff0000;
+         font-weight: bold;
+         margin-top: 15px;
+         font-size: 14px;
+         text-align: center;
+         padding: 5px 0;
+      }
+
+      .btn-center {
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         gap: 10px;
+      }
+   </style>
 
 </head>
 
@@ -86,31 +88,31 @@ while ($row = mysqli_fetch_assoc($availabilityResult)) {
    <section class="home-packages">
       <h1 class="heading-title">Choose your Luxury</h1>
       <div class="box-container">
-         <?php 
+         <?php
          $imageIndex = 1;
-         foreach ($packages as $package): 
+         foreach ($packages as $package):
             $imageSrc = "images/img-" . $imageIndex . ".jpg";
             $imageIndex++;
             if ($imageIndex > 15) $imageIndex = 1; // Loop images if more than 15 packages
          ?>
-         <div class="box">
-            <div class="image">
-               <img src="<?php echo $imageSrc; ?>" alt="<?php echo htmlspecialchars($package['package_name']); ?>">
-            </div>
-            <div class="content">
-               <h3><?php echo htmlspecialchars($package['package_name']); ?></h3>
-               <p><?php echo htmlspecialchars($package['description']); ?></p>
-               <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
-               <div class="btn-center">
-                  <?php if (isset($packageAvailability[$package['package_name']]) && $packageAvailability[$package['package_name']] == 0): ?>
-                     <span class="btn btn-disabled">Book Now</span>
-                     <div class="availed-message">Package availed</div>
-                  <?php else: ?>
-                     <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
-                  <?php endif; ?>
+            <div class="box">
+               <div class="image">
+                  <img src="<?php echo $imageSrc; ?>" alt="<?php echo htmlspecialchars($package['package_name']); ?>">
+               </div>
+               <div class="content">
+                  <h3><?php echo htmlspecialchars($package['package_name']); ?></h3>
+                  <p><?php echo htmlspecialchars($package['description']); ?></p>
+                  <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
+                  <div class="btn-center">
+                     <?php if (isset($packageAvailability[$package['package_name']]) && $packageAvailability[$package['package_name']] == 0): ?>
+                        <span class="btn btn-disabled">Book Now</span>
+                        <div class="availed-message">Package availed</div>
+                     <?php else: ?>
+                        <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
+                     <?php endif; ?>
+                  </div>
                </div>
             </div>
-         </div>
          <?php endforeach; ?>
       </div>
    </section>
@@ -159,4 +161,5 @@ while ($row = mysqli_fetch_assoc($availabilityResult)) {
    <script src="js/script.js"></script>
 
 </body>
+
 </html>

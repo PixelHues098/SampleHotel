@@ -1,3 +1,17 @@
+<?php
+// Connect to database
+include 'connection.php';
+
+// Fetch first 3 packages from database
+$packages = [];
+$query = "SELECT package_name, description, price FROM packages LIMIT 3";
+$result = mysqli_query($connection, $query);
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $packages[] = $row;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -148,64 +162,36 @@
 
    <!-- home about section ends -->
 
-   <!-- home packages section starts  -->
-
-   <section class="home-packages">
-
-      <h1 class="heading-title"> Our Packages </h1>
-
-      <div class="box-container">
-
-         <div class="box">
+   <!-- home packages section starts -->
+<section class="home-packages">
+    <h1 class="heading-title">Our Packages</h1>
+    <div class="box-container">
+        <?php 
+        // Display first 3 packages with fixed images
+        for ($i = 0; $i < min(3, count($packages)); $i++): 
+            $package = $packages[$i];
+            $imageNum = $i + 1; // Images are img-1.jpg, img-2.jpg, etc.
+        ?>
+        <div class="box">
             <div class="image">
-               <img src="images/img-1.jpg" alt="">
+                <img src="images/img-<?php echo $imageNum; ?>.jpg" alt="<?php echo htmlspecialchars($package['package_name']); ?>">
             </div>
             <div class="content">
-            <h3>Serenity Suite</h3>
-               <p>A peaceful retreat with a balcony overlooking a garden, perfect for relaxation.</p>
-               <h2>₱5,500 per night</h2>
-               <div class="btn-center">
-                  <a href="book.php" class="btn">Book Now</a>
-               </div>
+                <h3><?php echo htmlspecialchars($package['package_name']); ?></h3>
+                <p><?php echo htmlspecialchars($package['description']); ?></p>
+                <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
+                <div class="btn-center">
+                    <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
+                </div>
             </div>
-         </div>
-
-         <div class="box">
-            <div class="image">
-               <img src="images/img-2.jpg" alt="">
-            </div>
-            <div class="content">
-            <h3>Ocean Breeze Deluxe</h3>
-               <p>Spacious room with a stunning sea view and a private veranda.</p>
-               <h2>₱6,800 per night</h2>
-               <div class="btn-center">
-                  <a href="book.php" class="btn">Book Now</a>
-               </div>
-            </div>
-         </div>
-
-         <div class="box">
-            <div class="image">
-               <img src="images/img-3.jpg" alt="">
-            </div>
-            <div class="content">
-            <h3>Bamboo Haven</h3>
-               <p>Eco-friendly room with bamboo furnishings and a tropical vibe.</p>
-               <h2>₱4,200 per night</h2>
-               <div class="btn-center">
-                  <a href="book.php" class="btn">Book Now</a>
-               </div>
-            </div>
-         </div>
-
-      </div>
-
-
-      <div class="load-more"> <a href="package.php" class="btn">Load More</a> </div>
-
-   </section>
-
-   <!-- home packages section ends -->
+        </div>
+        <?php endfor; ?>
+    </div>
+    <div class="load-more">
+        <a href="package.php" class="btn">Load More</a>
+    </div>
+</section>
+<!-- home packages section ends -->
 
    <!-- home offer section starts  -->
 
