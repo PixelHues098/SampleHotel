@@ -42,7 +42,7 @@ $user = $result->fetch_assoc();
 
 <section class="header">
 
-<a href="index.php" class="logo"><img src="images/logo.png" alt="" style="width:500px;height:100px;"></a>
+<a href="index.php" class="logo"><img src="images/logo.jpg" alt="" style="width:450px;height:100px;"></a>
 
 <nav class="navbar">
    <a href="index.php"><i class="fas fa-home"></i> Home</a>

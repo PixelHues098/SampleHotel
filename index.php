@@ -8,7 +8,7 @@ $query = "SELECT package_name, description, price FROM packages LIMIT 3";
 $result = mysqli_query($connection, $query);
 
 while ($row = mysqli_fetch_assoc($result)) {
-    $packages[] = $row;
+   $packages[] = $row;
 }
 ?>
 
@@ -39,7 +39,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
    <section class="header">
 
-      <a href="index.php" class="logo"><img src="images/logo.png" alt="" style="width:500px;height:100px;"></a>
+      <a href="index.php" class="logo"><img src="images/logo.jpg" alt="" style="width:500px;height:100px;"></a>
 
       <nav class="navbar">
          <a href="index.php"><i class="fas fa-home"></i> Home</a>
@@ -163,35 +163,35 @@ while ($row = mysqli_fetch_assoc($result)) {
    <!-- home about section ends -->
 
    <!-- home packages section starts -->
-<section class="home-packages">
-    <h1 class="heading-title">Our Packages</h1>
-    <div class="box-container">
-        <?php 
-        // Display first 3 packages with fixed images
-        for ($i = 0; $i < min(3, count($packages)); $i++): 
+   <section class="home-packages">
+      <h1 class="heading-title">Our Packages</h1>
+      <div class="box-container">
+         <?php
+         // Display first 3 packages with fixed images
+         for ($i = 0; $i < min(3, count($packages)); $i++):
             $package = $packages[$i];
             $imageNum = $i + 1; // Images are img-1.jpg, img-2.jpg, etc.
-        ?>
-        <div class="box">
-            <div class="image">
-                <img src="images/img-<?php echo $imageNum; ?>.jpg" alt="<?php echo htmlspecialchars($package['package_name']); ?>">
+         ?>
+            <div class="box">
+               <div class="image">
+                  <img src="images/img-<?php echo $imageNum; ?>.jpg" alt="<?php echo htmlspecialchars($package['package_name']); ?>">
+               </div>
+               <div class="content">
+                  <h3><?php echo htmlspecialchars($package['package_name']); ?></h3>
+                  <p><?php echo htmlspecialchars($package['description']); ?></p>
+                  <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
+                  <div class="btn-center">
+                     <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
+                  </div>
+               </div>
             </div>
-            <div class="content">
-                <h3><?php echo htmlspecialchars($package['package_name']); ?></h3>
-                <p><?php echo htmlspecialchars($package['description']); ?></p>
-                <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
-                <div class="btn-center">
-                    <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
-                </div>
-            </div>
-        </div>
-        <?php endfor; ?>
-    </div>
-    <div class="load-more">
-        <a href="package.php" class="btn">Load More</a>
-    </div>
-</section>
-<!-- home packages section ends -->
+         <?php endfor; ?>
+      </div>
+      <div class="load-more">
+         <a href="package.php" class="btn">Load More</a>
+      </div>
+   </section>
+   <!-- home packages section ends -->
 
    <!-- home offer section starts  -->
 
