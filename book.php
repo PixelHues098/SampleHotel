@@ -28,14 +28,11 @@ if (!empty($selected_package)) {
     
     while ($row = $date_result->fetch_assoc()) {
         $booked_dates[] = [
-            'start' => $row['arrivals'],
-            'end' => $row['leaving']
+            'from' => $row['arrivals'],
+            'to' => $row['leaving']
         ];
     }
 }
-
-// Convert to JSON for JavaScript
-$booked_dates_json = json_encode($booked_dates);
 ?>
 
 <!DOCTYPE html>
@@ -46,29 +43,71 @@ $booked_dates_json = json_encode($booked_dates);
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>BOOK NOW!</title>
 
-   <!-- swiper css link  -->
+   <!-- swiper css link -->
    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
 
-   <!-- font awesome cdn link  -->
+   <!-- font awesome cdn link -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-   <!-- custom css file link  -->
+   <!-- flatpickr (calendar) -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+   <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/material_blue.css">
+
+   <!-- custom css file link -->
    <link rel="stylesheet" href="css/style.css">
 
    <style>
-      input[type="date"]:disabled {
-         background-color: #f0f0f0;
-         color: #999;
+      .flatpickr-day.booked {
+         background: #ff4444;
+         color: white;
+         border-color: #ff4444;
       }
-      .error-message {
-         color: red;
-         margin-top: 10px;
-         display: none;
+      .flatpickr-day.booked:hover {
+         background: #ff2222;
       }
-      .date-warning {
-         color: #ff9800;
+      .flatpickr-day.booked.startRange, 
+      .flatpickr-day.booked.endRange {
+         background: #ff0000;
+      }
+      .flatpickr-day.booked.inRange {
+         background: rgba(255, 68, 68, 0.2);
+         box-shadow: -5px 0 0 rgba(255, 68, 68, 0.2), 5px 0 0 rgba(255, 68, 68, 0.2);
+      }
+      .date-legend {
+         display: flex;
+         justify-content: center;
+         margin: 15px 0;
+         gap: 20px;
+         flex-wrap: wrap;
+      }
+      .legend-item {
+         display: flex;
+         align-items: center;
          font-size: 14px;
-         margin-top: 5px;
+         margin: 5px 0;
+      }
+      .legend-color {
+         width: 20px;
+         height: 20px;
+         margin-right: 8px;
+         border-radius: 3px;
+      }
+      .booking-form-container {
+         max-width: 1200px;
+         margin: 0 auto;
+         padding: 20px;
+      }
+      .flatpickr-input {
+         background-color: #f9f9f9;
+         border: 1px solid #ddd;
+         padding: 12px 15px;
+         border-radius: 5px;
+         font-size: 16px;
+         width: 100%;
+      }
+      .flatpickr-calendar {
+         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+         border-radius: 8px;
       }
    </style>
 </head>
@@ -97,59 +136,60 @@ $booked_dates_json = json_encode($booked_dates);
 </div>
 
 <!-- booking section starts -->
-<section class="booking">  
-   <h1 class="heading-title">Book your Indulgement!</h1>
+<div class="booking-form-container">
+   <section class="booking">  
+      <h1 class="heading-title">Book your Indulgement!</h1>
 
-   <?php if (isset($_SESSION['user_id'])): ?>
-   <form action="book_form.php" method="post" class="book-form">
-      <div class="flex">
-         <div class="inputBox">
-            <span>Name :</span>
-            <input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" readonly>
+      <?php if (isset($_SESSION['user_id'])): ?>
+      <form action="book_form.php" method="post" class="book-form">
+         <div class="flex">
+            <div class="inputBox">
+               <span>Name :</span>
+               <input type="text" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" readonly>
+            </div>
+            <div class="inputBox">
+               <span>Email :</span>
+               <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
+            </div>
+            <div class="inputBox">
+               <span>Phone :</span>
+               <input type="text" name="phone" placeholder="Enter your number" required maxlength="11" pattern="^09\d{9}$" inputmode="numeric" title="Phone number must start with 09 and be exactly 11 digits">
+            </div>
+            <div class="inputBox">
+               <span>Address :</span>
+               <input type="text" placeholder="Enter your address" name="address" required>
+            </div>
+            <div class="inputBox">
+               <span>Package :</span>
+               <input type="text" name="package" value="<?php echo htmlspecialchars($selected_package); ?>" readonly>
+            </div>
+            <div class="inputBox">
+               <span>Number of guests:</span>
+               <input type="number" placeholder="Enter number of guests" name="guests" required min="1">
+            </div>
+            <div class="inputBox">
+               <span>Arrival Date :</span>
+               <input type="text" class="flatpickr-input" name="arrivals" id="arrivals" placeholder="Select arrival date" required readonly>
+            </div>
+            <div class="inputBox">
+               <span>Departure Date :</span>
+               <input type="text" class="flatpickr-input" name="leaving" id="leaving" placeholder="Select departure date" required readonly>
+            </div>
          </div>
-         <div class="inputBox">
-            <span>Email :</span>
-            <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
-         </div>
-         <div class="inputBox">
-            <span>Phone :</span>
-            <input type="text" name="phone" placeholder="Enter your number" required maxlength="11" pattern="^09\d{9}$" inputmode="numeric" title="Phone number must start with 09 and be exactly 11 digits">
-         </div>
-         <div class="inputBox">
-            <span>Address :</span>
-            <input type="text" placeholder="Enter your address" name="address" required>
-         </div>
-         <div class="inputBox">
-            <span>Package :</span>
-            <input type="text" name="package" value="<?php echo htmlspecialchars($selected_package); ?>" readonly>
-         </div>
-         <div class="inputBox">
-            <span>Number of guests:</span>
-            <input type="number" placeholder="Enter number of guests" name="guests" required min="1">
-         </div>
-         <div class="inputBox">
-            <span>Arrivals :</span>
-            <input type="date" name="arrivals" id="arrivals" required>
-            <div class="date-warning">Please check availability</div>
-         </div>
-         <div class="inputBox">
-            <span>Leaving :</span>
-            <input type="date" name="leaving" id="leaving" required>
-            <div class="error-message"></div>
-         </div>
-      </div> 
-      <div class="btn-center">
-         <input type="submit" value="submit" class="btn" name="send">
-      </div>  
-   </form>
-   <?php else: ?>
-   <div style="text-align:center; margin-top: 20px;">
-      <p style="font-size: 18px;">You must be logged in to book a trip.</p>
-      <a href="login.php" class="btn">Login</a>
-      <a href="register.php" class="btn">Register</a>
-   </div>
-   <?php endif; ?>
-</section>
+
+         <div class="btn-center">
+            <input type="submit" value="Submit Booking" class="btn" name="send">
+         </div>  
+      </form>
+      <?php else: ?>
+      <div style="text-align:center; margin-top: 20px;">
+         <p style="font-size: 18px;">You must be logged in to book a trip.</p>
+         <a href="login.php" class="btn">Login</a>
+         <a href="register.php" class="btn">Register</a>
+      </div>
+      <?php endif; ?>
+   </section>
+</div>
 <!-- booking section ends -->
 
 <!-- footer section starts -->
@@ -188,105 +228,135 @@ $booked_dates_json = json_encode($booked_dates);
 </section>
 <!-- footer section ends -->
 
-<!-- swiper js link  -->
+<!-- swiper js link -->
 <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+
+<!-- flatpickr js -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const bookedDates = <?php echo $booked_dates_json; ?>;
-    const arrivalsInput = document.getElementById('arrivals');
-    const leavingInput = document.getElementById('leaving');
-    const errorElement = document.querySelector('.error-message');
-    const dateWarning = document.querySelector('.date-warning');
-
-    // Set minimum date to tomorrow
+    const bookedRanges = <?php echo json_encode($booked_dates); ?>;
     const today = new Date();
     const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    const minDate = tomorrow.toISOString().split('T')[0];
-    arrivalsInput.min = minDate;
-    leavingInput.min = minDate;
+    tomorrow.setDate(today.getDate());
 
-    // Check if a date is within any booked range
-    function isDateBooked(date) {
-        if (!date) return false;
-        const checkDate = new Date(date);
-        return bookedDates.some(booking => {
-            const startDate = new Date(booking.start);
-            const endDate = new Date(booking.end);
-            return checkDate >= startDate && checkDate <= endDate;
+    // Format dates for flatpickr
+    const disabledRanges = bookedRanges.map(range => ({
+        from: range.from,
+        to: range.to
+    }));
+
+    // Function to style booked dates
+    function styleBookedDates() {
+        document.querySelectorAll('.flatpickr-day').forEach(day => {
+            const date = new Date(day.dateObj);
+            day.classList.remove('booked', 'startRange', 'endRange', 'inRange');
+            
+            // Check if date falls in any booked range
+            bookedRanges.forEach(range => {
+                const start = new Date(range.from);
+                const end = new Date(range.to);
+                
+                if (date >= start && date <= end) {
+                    day.classList.add('booked');
+                    if (date.toDateString() === start.toDateString()) {
+                        day.classList.add('startRange');
+                    } else if (date.toDateString() === end.toDateString()) {
+                        day.classList.add('endRange');
+                    } else {
+                        day.classList.add('inRange');
+                    }
+                }
+            });
         });
     }
 
-    // Check if a date range overlaps with any booking
+    // Initialize arrival date picker
+    const arrivalsPicker = flatpickr("#arrivals", {
+        minDate: tomorrow,
+        dateFormat: "Y-m-d",
+        disable: disabledRanges,
+        onReady: function(selectedDates, dateStr, instance) {
+            styleBookedDates();
+        },
+        onMonthChange: function(selectedDates, dateStr, instance) {
+            setTimeout(styleBookedDates, 10);
+        },
+        onChange: function(selectedDates, dateStr, instance) {
+            styleBookedDates();
+            if (selectedDates.length) {
+                leavingPicker.set('minDate', selectedDates[0]);
+                if (leavingPicker.selectedDates[0] && 
+                    leavingPicker.selectedDates[0] < selectedDates[0]) {
+                    leavingPicker.clear();
+                }
+            }
+        }
+    });
+
+    // Initialize leaving date picker
+    const leavingPicker = flatpickr("#leaving", {
+        minDate: tomorrow,
+        dateFormat: "Y-m-d",
+        disable: disabledRanges,
+        onReady: function(selectedDates, dateStr, instance) {
+            styleBookedDates();
+        },
+        onMonthChange: function(selectedDates, dateStr, instance) {
+            setTimeout(styleBookedDates, 10);
+        },
+        onChange: function(selectedDates, dateStr, instance) {
+            styleBookedDates();
+            if (selectedDates.length && arrivalsPicker.selectedDates.length) {
+                const arrival = arrivalsPicker.selectedDates[0];
+                const leaving = selectedDates[0];
+                
+                const isRangeValid = !isRangeBooked(arrival, leaving);
+                if (!isRangeValid) {
+                    alert("Your selected dates include booked periods. Please choose different dates.");
+                    leavingPicker.clear();
+                }
+            }
+        }
+    });
+
+    // Check if any date in range is booked
     function isRangeBooked(startDate, endDate) {
-        const checkStart = new Date(startDate);
-        const checkEnd = new Date(endDate);
-        return bookedDates.some(booking => {
-            const bookingStart = new Date(booking.start);
-            const bookingEnd = new Date(booking.end);
-            return (checkStart >= bookingStart && checkStart <= bookingEnd) ||
-                   (checkEnd >= bookingStart && checkEnd <= bookingEnd) ||
-                   (checkStart <= bookingStart && checkEnd >= bookingEnd);
+        return bookedRanges.some(range => {
+            const rangeStart = new Date(range.from);
+            const rangeEnd = new Date(range.to);
+            return (startDate <= rangeEnd && endDate >= rangeStart);
         });
     }
-
-    // Validate dates when changed
-    arrivalsInput.addEventListener('change', function() {
-        if (isDateBooked(this.value)) {
-            dateWarning.textContent = "This arrival date is already booked!";
-            dateWarning.style.color = "red";
-            this.value = '';
-        } else {
-            dateWarning.textContent = "Available date";
-            dateWarning.style.color = "green";
-            leavingInput.min = this.value;
-        }
-        validateDates();
-    });
-
-    leavingInput.addEventListener('change', function() {
-        if (isDateBooked(this.value)) {
-            errorElement.textContent = "This leaving date is already booked!";
-            errorElement.style.display = "block";
-            this.value = '';
-        } else if (arrivalsInput.value && new Date(this.value) < new Date(arrivalsInput.value)) {
-            errorElement.textContent = "Leaving date cannot be before arrival date!";
-            errorElement.style.display = "block";
-            this.value = '';
-        } else if (arrivalsInput.value && isRangeBooked(arrivalsInput.value, this.value)) {
-            errorElement.textContent = "This date range overlaps with an existing booking!";
-            errorElement.style.display = "block";
-            this.value = '';
-        } else {
-            errorElement.style.display = "none";
-        }
-    });
 
     // Form submission validation
     document.querySelector('.book-form').addEventListener('submit', function(e) {
-        if (!arrivalsInput.value || !leavingInput.value) {
+        if (!arrivalsPicker.selectedDates.length || !leavingPicker.selectedDates.length) {
             e.preventDefault();
-            alert('Please select both arrival and leaving dates');
+            alert('Please select both arrival and departure dates');
             return;
         }
         
-        if (isRangeBooked(arrivalsInput.value, leavingInput.value)) {
+        const arrival = arrivalsPicker.selectedDates[0];
+        const leaving = leavingPicker.selectedDates[0];
+        
+        if (leaving < arrival) {
             e.preventDefault();
-            alert('The selected dates overlap with an existing booking. Please choose different dates.');
+            alert('Departure date cannot be before arrival date');
             return;
         }
         
-        if (new Date(leavingInput.value) < new Date(arrivalsInput.value)) {
+        if (isRangeBooked(arrival, leaving)) {
             e.preventDefault();
-            alert('Leaving date cannot be before arrival date');
+            alert('The selected dates include booked periods. Please choose different dates.');
             return;
         }
     });
 });
 </script>
 
-<!-- custom js file link  -->
+<!-- custom js file link -->
 <script src="js/script.js"></script>
 
 </body>
