@@ -104,12 +104,12 @@ while ($row = mysqli_fetch_assoc($availabilityResult)) {
                   <p><?php echo htmlspecialchars($package['description']); ?></p>
                   <h2>₱<?php echo number_format($package['price'], 2); ?> per night</h2>
                   <div class="btn-center">
-                     <?php if (isset($packageAvailability[$package['package_name']]) && $packageAvailability[$package['package_name']] == 0): ?>
+                     <!-- <?php if (isset($packageAvailability[$package['package_name']]) && $packageAvailability[$package['package_name']] == 0): ?>
                         <span class="btn btn-disabled">Book Now</span>
                         <div class="availed-message">Package availed</div>
-                     <?php else: ?>
+                     <?php else: ?> -->
                         <a href="book.php?package=<?php echo urlencode($package['package_name']); ?>" class="btn">Book Now</a>
-                     <?php endif; ?>
+                     <!-- <?php endif; ?> -->
                   </div>
                </div>
             </div>
