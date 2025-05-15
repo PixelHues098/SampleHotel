@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2025 at 11:40 AM
+-- Generation Time: May 15, 2025 at 08:10 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -49,14 +49,28 @@ INSERT INTO `admin` (`id`, `username`, `password`) VALUES
 CREATE TABLE `booking` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `address` varchar(255) DEFAULT NULL,
   `package` varchar(255) DEFAULT NULL,
   `guests` int(11) DEFAULT NULL,
   `arrivals` date DEFAULT NULL,
   `leaving` date DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_method` varchar(50) DEFAULT NULL,
+  `payment_details` text DEFAULT NULL,
+  `reference_number` varchar(100) DEFAULT NULL,
+  `total_amount` decimal(10,2) DEFAULT NULL,
+  `status` varchar(20) DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `booking`
+--
+
+INSERT INTO `booking` (`id`, `user_id`, `name`, `email`, `phone`, `address`, `package`, `guests`, `arrivals`, `leaving`, `created_at`, `payment_method`, `payment_details`, `reference_number`, `total_amount`, `status`) VALUES
+(10, 1, 'Dummy Account', 'dummy@gmail.com', '09481255346', 'San Pablo City', 'Serenity Suite', 2, '2025-05-22', '2025-05-25', '2025-05-14 17:29:05', 'Maya', '{\"number\":\"09481255346\",\"name\":\"Dummy\"}', '', 11000.00, 'Pending');
 
 -- --------------------------------------------------------
 
@@ -167,7 +181,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `packages`

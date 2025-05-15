@@ -256,110 +256,254 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casa Luna Admin</title>
+    <title>Casa Luna Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+            --sidebar-bg: #2c3e50;
+            --sidebar-active: #3498db;
+            --sidebar-hover: #34495e;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fc;
+            color: #333;
+        }
+
+        /* Sidebar Styles */
         .sidebar {
             min-height: 100vh;
-            background-color: #343a40;
+            background-color: var(--sidebar-bg);
+            background-image: linear-gradient(180deg, var(--sidebar-bg) 10%, #224abe 100%);
+            background-size: cover;
+            transition: all 0.3s;
         }
 
         .sidebar .nav-link {
-            color: rgba(255, 255, 255, 0.75);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            font-weight: 600;
+            border-left: 0.25rem solid transparent;
+            transition: all 0.3s;
         }
 
-        .sidebar .nav-link:hover,
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background-color: var(--sidebar-hover);
+        }
+
         .sidebar .nav-link.active {
             color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--sidebar-hover);
+            border-left-color: var(--sidebar-active);
         }
 
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav-item .logout-link {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .sidebar .nav-item .logout-link:hover {
+            color: #fff;
+            background-color: rgba(255, 99, 71, 0.2);
+        }
+
+        /* Main Content Styles */
         .main-content {
-            padding: 20px;
+            padding: 2rem;
+            width: 100%;
         }
 
-        .search-box {
-            max-width: 300px;
+        .topbar {
+            height: 4.375rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            background-color: #fff;
         }
 
-        .pagination .page-item.active .page-link {
-            background-color: lightblue;
-            border-color: #343a40;
+        .topbar .navbar-search {
+            width: 25rem;
         }
 
-        .pagination .page-link {
-            color: #343a40;
+        .topbar .navbar-search input {
+            font-size: 0.85rem;
+            height: auto;
         }
 
-        /* Calendar Styles */
-        #calendar-container {
-            margin-top: 20px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            overflow: hidden;
+        .topbar .topbar-divider {
+            width: 0;
+            border-right: 1px solid #e3e6f0;
+            height: calc(4.375rem - 2rem);
+            margin: auto 1rem;
         }
 
-        .day-header {
-            padding: 10px;
-            font-weight: bold;
-            border-right: 1px solid #fff;
+        .topbar .nav-item .nav-link {
+            height: 4.375rem;
+            display: flex;
+            align-items: center;
+            padding: 0 0.75rem;
+            color: #d1d3e2;
         }
 
-        .day-header:last-child {
-            border-right: none;
+        .topbar .nav-item .nav-link:hover {
+            color: #b7b9cc;
         }
 
-        .calendar-day {
-            min-height: 120px;
-            padding: 5px;
-            border-right: 1px solid #dee2e6;
-            border-bottom: 1px solid #dee2e6;
-            position: relative;
+        .topbar .nav-item .nav-link .badge-counter {
+            position: absolute;
+            transform: scale(0.7);
+            transform-origin: top right;
+            right: 0.25rem;
+            margin-top: -0.25rem;
         }
 
-        .calendar-day:nth-child(7n) {
-            border-right: none;
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            margin-bottom: 1.5rem;
         }
 
-        .calendar-day.other-month {
-            background-color: #f8f9fa;
-            color: #6c757d;
+        .card-header {
+            background-color: #f8f9fc;
+            border-bottom: 1px solid #e3e6f0;
+            padding: 1rem 1.35rem;
+            font-weight: 700;
         }
 
-        .calendar-day.today {
-            background-color: #e9f7fe;
+        .card-body {
+            padding: 1.5rem;
         }
 
-        .booking-event {
-            font-size: 12px;
-            padding: 2px 5px;
-            margin: 2px 0;
-            background-color: #4e73df;
-            color: white;
-            border-radius: 3px;
-            cursor: pointer;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        /* Table Styles */
+        .table-responsive {
+            overflow-x: auto;
         }
 
-        .booking-event:hover {
-            opacity: 0.9;
+        .table {
+            margin-bottom: 0;
+            color: #5a5c69;
         }
 
-        .day-number {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        /* Payment Status Badges */
-        .status-badge {
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
+        .table th {
+            border-top: none;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 700;
+            padding: 1rem;
             text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.1rem;
+            color: var(--secondary-color);
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-top: 1px solid #e3e6f0;
+        }
+
+        .table tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Button Styles */
+        .btn {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 0.35rem;
+            transition: all 0.3s;
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            border-color: var(--info-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        /* Badge Styles */
+        .badge {
+            font-weight: 600;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            border-radius: 0.25rem;
+        }
+
+        .badge-primary {
+            background-color: var(--primary-color);
+        }
+
+        .badge-success {
+            background-color: var(--success-color);
+        }
+
+        .badge-info {
+            background-color: var(--info-color);
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: var(--danger-color);
+        }
+
+        /* Status Badges */
+        .status-badge {
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-radius: 0.25rem;
+            display: inline-block;
         }
 
         .status-pending {
@@ -372,17 +516,52 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
             color: #155724;
         }
 
-        .status-cancelled {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
         .status-completed {
             background-color: #d1ecf1;
             color: #0c5460;
         }
 
-        /* Payment method icons */
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Pagination Styles */
+        .pagination .page-item .page-link {
+            color: var(--primary-color);
+            border: 1px solid #ddd;
+            margin-left: -1px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+
+        /* Form Styles */
+        .form-control, .form-select {
+            border-radius: 0.35rem;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d3e2;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 0.35rem;
+            padding: 1rem 1.5rem;
+        }
+
+        /* Payment Method Icons */
         .payment-method-icon {
             width: 24px;
             height: 24px;
@@ -390,14 +569,51 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
             vertical-align: middle;
         }
 
-        /* Payment details modal */
-        .payment-details-table th {
-            width: 30%;
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .sidebar .nav-link {
+                padding: 0.5rem 1rem;
+            }
+            .main-content {
+                padding: 1rem;
+            }
+            .topbar .navbar-search {
+                width: 100%;
+            }
         }
 
-        /* Quick status update dropdown */
-        .status-dropdown {
-            min-width: 120px;
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
 </head>
@@ -406,809 +622,798 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 d-md-block sidebar bg-dark">
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-dark" id="sidebarMenu">
                 <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">Casa Luna Admin</h4>
+                    </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link <?php echo $active_tab == 'users' ? 'active' : ''; ?>" href="?tab=users">
-                                <i class="bi bi-people me-2"></i>Users
+                                <i class="bi bi-people"></i>
+                                Users Management
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo $active_tab == 'packages' ? 'active' : ''; ?>"
-                                href="?tab=packages">
-                                <i class="bi bi-box-seam me-2"></i>Packages
+                            <a class="nav-link <?php echo $active_tab == 'packages' ? 'active' : ''; ?>" href="?tab=packages">
+                                <i class="bi bi-box-seam"></i>
+                                Packages Management
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link <?php echo $active_tab == 'bookings' ? 'active' : ''; ?>"
-                                href="?tab=bookings">
-                                <i class="bi bi-calendar-check me-2"></i>Bookings
+                            <a class="nav-link <?php echo $active_tab == 'bookings' ? 'active' : ''; ?>" href="?tab=bookings">
+                                <i class="bi bi-calendar-check"></i>
+                                Bookings Management
                             </a>
                         </li>
-                        <!-- <li class="nav-item">
-                            <a class="nav-link <?php echo $active_tab == 'calendar' ? 'active' : ''; ?>" href="?tab=calendar">
-                                <i class="bi bi-calendar-date me-2"></i>Calendar View
-                            </a>
-                        </li> -->
-                        <li class="nav-item mt-3">
-                            <a class="nav-link text-danger" href="logout.php">
-                                <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        <li class="nav-item mt-4">
+                            <a class="nav-link logout-link" href="logout.php">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Logout
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Main content -->
-            <div class="col-md-9 ms-sm-auto col-lg-10 main-content">
-                <div
-                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class>Casa Luna Admin Dashboard</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <span class="btn btn-sm btn-outline-secondary">Welcome,
-                                <?php echo $_SESSION['admin_username']; ?></span>
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <!-- Top Navigation -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <!-- Sidebar Toggle (Topbar) -->
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <!-- Topbar Search -->
+                    <form method="GET" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                        <input type="hidden" name="tab" value="<?php echo $active_tab; ?>">
+                        <div class="input-group">
+                            <input type="text" class="form-control bg-light border-0 small" name="search" placeholder="Search for..." value="<?php echo htmlspecialchars($search_query); ?>">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
                         </div>
-                    </div>
-                </div>
+                    </form>
 
-                <?php if (isset($success)): ?>
-                    <div class="alert alert-success"><?php echo $success; ?></div>
-                <?php endif; ?>
-
-                <!-- Tab Content Container -->
-                <div class="tab-content">
-                    <!-- Users Tab -->
-                    <div class="tab-pane <?php echo $active_tab == 'users' ? 'active' : ''; ?>" id="users">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3>Users Management</h3>
-                            <div>
-                                <form method="GET" class="d-flex">
-                                    <input type="hidden" name="tab" value="users">
-                                    <div class="input-group search-box">
-                                        <input type="text" class="form-control" name="search" placeholder="Search users..." value="<?php echo $active_tab == 'users' ? htmlspecialchars($search_query) : ''; ?>">
-                                        <button class="btn btn-outline-secondary" type="submit">
-                                            <i class="bi bi-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
+                    <!-- Topbar Navbar -->
+                    <ul class="navbar-nav ml-auto">
+                        <!-- Nav Item - User Information -->
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['admin_username']; ?></span>
+                                <i class="bi bi-person-circle fs-4"></i>
+                            </a>
+                            <!-- Dropdown - User Information -->
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-person-fill mr-2 text-gray-400"></i>
+                                    Profile
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="bi bi-gear-fill mr-2 text-gray-400"></i>
+                                    Settings
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="logout.php">
+                                    <i class="bi bi-box-arrow-right mr-2 text-gray-400"></i>
+                                    Logout
+                                </a>
                             </div>
-                        </div>
+                        </li>
+                    </ul>
+                </nav>
 
-                        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
-                            <i class="bi bi-plus"></i> Add User
-                        </button>
-
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($user = mysqli_fetch_assoc($users)): ?>
-                                        <tr>
-                                            <td><?php echo $user['id']; ?></td>
-                                            <td><?php echo htmlspecialchars($user['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($user['email']); ?></td>
-                                            <td><?php echo $user['created_at']; ?></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="#editUserModal<?php echo $user['id']; ?>">
-                                                    <i class="bi bi-pencil"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteUserModal<?php echo $user['id']; ?>">
-                                                    <i class="bi bi-trash"></i> Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Edit User Modal -->
-                                        <div class="modal fade" id="editUserModal<?php echo $user['id']; ?>" tabindex="-1"
-                                            aria-labelledby="editUserModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="admin.php?tab=users">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="user_id"
-                                                                value="<?php echo $user['id']; ?>">
-                                                            <div class="mb-3">
-                                                                <label for="name" class="form-label">Name</label>
-                                                                <input type="text" class="form-control" id="name"
-                                                                    name="name"
-                                                                    value="<?php echo htmlspecialchars($user['name']); ?>"
-                                                                    required>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="email" class="form-label">Email</label>
-                                                                <input type="email" class="form-control" id="email"
-                                                                    name="email"
-                                                                    value="<?php echo htmlspecialchars($user['email']); ?>"
-                                                                    required>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" name="edit_user"
-                                                                class="btn btn-primary">Save changes</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete User Modal -->
-                                        <div class="modal fade" id="deleteUserModal<?php echo $user['id']; ?>" tabindex="-1"
-                                            aria-labelledby="deleteUserModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="admin.php?tab=users">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="user_id"
-                                                                value="<?php echo $user['id']; ?>">
-                                                            <p>Are you sure you want to delete this user:
-                                                                <?php echo htmlspecialchars($user['name']); ?>?</p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" name="delete_user"
-                                                                class="btn btn-danger">Delete</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-
-                            <!-- Users Pagination -->
-                            <nav aria-label="Users pagination">
-                                <ul class="pagination justify-content-center">
-                                    <?php if ($user_page > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=users&user_page=<?php echo $user_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-
-                                    <?php for ($i = 1; $i <= $total_user_pages; $i++): ?>
-                                        <li class="page-item <?php echo $i == $user_page ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?tab=users&user_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
-
-                                    <?php if ($user_page < $total_user_pages): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=users&user_page=<?php echo $user_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
-
-                            <div class="text-muted text-center">
-                                Showing <?php echo ($user_offset + 1) . ' to ' . min($user_offset + $records_per_page, $total_users); ?> of <?php echo $total_users; ?> users
-                            </div>
-                        </div>
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                        <?php if ($active_tab == 'bookings'): ?>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                                <i class="bi bi-plus-circle"></i> Add Booking
+                            </button>
+                        <?php elseif ($active_tab == 'users'): ?>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                <i class="bi bi-plus-circle"></i> Add User
+                            </button>
+                        <?php endif; ?>
                     </div>
 
-                    <!-- Packages Tab -->
-                    <div class="tab-pane <?php echo $active_tab == 'packages' ? 'active' : ''; ?>" id="packages">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3>Packages Management</h3>
-                            <div>
-                                <form method="GET" class="d-flex">
-                                    <input type="hidden" name="tab" value="packages">
-                                    <div class="input-group search-box">
-                                        <input type="text" class="form-control" name="search" placeholder="Search packages..." value="<?php echo $active_tab == 'packages' ? htmlspecialchars($search_query) : ''; ?>">
-                                        <button class="btn btn-outline-secondary" type="submit">
-                                            <i class="bi bi-search"></i>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                    <?php if (isset($success)): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <?php echo $success; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
+                    <?php endif; ?>
 
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Package Name</th>
-                                        <th>Description</th>
-                                        <th>Price</th>
-                                        <th>Availability</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($package = mysqli_fetch_assoc($packages)): ?>
-                                        <tr>
-                                            <td><?php echo $package['id']; ?></td>
-                                            <td><?php echo htmlspecialchars($package['package_name']); ?></td>
-                                            <td><?php echo htmlspecialchars($package['description']); ?></td>
-                                            <td><?php echo number_format($package['price'], 2); ?></td>
-                                            <td><?php echo $package['availability'] ? 'Available' : 'Not Available'; ?></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-primary" data-bs-toggle="modal"
-                                                    data-bs-target="#editPackageModal<?php echo $package['id']; ?>">
-                                                    <i class="bi bi-pencil"></i> Edit
-                                                </button>
-                                                <button class="btn btn-sm btn-danger" data-bs-toggle="modal"
-                                                    data-bs-target="#deletePackageModal<?php echo $package['id']; ?>">
-                                                    <i class="bi bi-trash"></i> Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-
-                                        <!-- Edit Package Modal -->
-                                        <div class="modal fade" id="editPackageModal<?php echo $package['id']; ?>"
-                                            tabindex="-1" aria-labelledby="editPackageModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="editPackageModalLabel">Edit Package</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="admin.php?tab=packages">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="package_id"
-                                                                value="<?php echo $package['id']; ?>">
-                                                            <div class="mb-3">
-                                                                <label for="package_name" class="form-label">Package
-                                                                    Name</label>
-                                                                <input type="text" class="form-control" id="package_name"
-                                                                    name="package_name"
-                                                                    value="<?php echo htmlspecialchars($package['package_name']); ?>"
-                                                                    required>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="description"
-                                                                    class="form-label">Description</label>
-                                                                <textarea class="form-control" id="description"
-                                                                    name="description" rows="3"
-                                                                    required><?php echo htmlspecialchars($package['description']); ?></textarea>
-                                                            </div>
-                                                            <div class="mb-3">
-                                                                <label for="price" class="form-label">Price</label>
-                                                                <input type="number" step="0.01" class="form-control"
-                                                                    id="price" name="price"
-                                                                    value="<?php echo $package['price']; ?>" required>
-                                                            </div>
-                                                            <div class="mb-3 form-check">
-                                                                <input type="checkbox" class="form-check-input"
-                                                                    id="availability" name="availability" <?php echo $package['availability'] ? 'checked' : ''; ?>>
-                                                                <label class="form-check-label"
-                                                                    for="availability">Available</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" name="edit_package"
-                                                                class="btn btn-primary">Save changes</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete Package Modal -->
-                                        <div class="modal fade" id="deletePackageModal<?php echo $package['id']; ?>"
-                                            tabindex="-1" aria-labelledby="deletePackageModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="deletePackageModalLabel">Delete Package
-                                                        </h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="admin.php?tab=packages">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="package_id"
-                                                                value="<?php echo $package['id']; ?>">
-                                                            <p>Are you sure you want to delete this package:
-                                                                <?php echo htmlspecialchars($package['package_name']); ?>?
-                                                            </p>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" name="delete_package"
-                                                                class="btn btn-danger">Delete</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
-
-                            <!-- Packages Pagination -->
-                            <nav aria-label="Packages pagination">
-                                <ul class="pagination justify-content-center">
-                                    <?php if ($package_page > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=packages&package_page=<?php echo $package_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Users Tab -->
+                        <div class="col-12 <?php echo $active_tab == 'users' ? '' : 'd-none'; ?>">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Users Management</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Actions:</div>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                                                <i class="bi bi-plus"></i> Add User
                                             </a>
-                                        </li>
-                                    <?php endif; ?>
-
-                                    <?php for ($i = 1; $i <= $total_package_pages; $i++): ?>
-                                        <li class="page-item <?php echo $i == $package_page ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?tab=packages&package_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
-
-                                    <?php if ($package_page < $total_package_pages): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=packages&package_page=<?php echo $package_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bi bi-download"></i> Export Data
                                             </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
-
-                            <div class="text-muted text-center">
-                                Showing <?php echo ($package_offset + 1) . ' to ' . min($package_offset + $records_per_page, $total_packages); ?> of <?php echo $total_packages; ?> packages
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Bookings Tab -->
-                    <div class="tab-pane <?php echo $active_tab == 'bookings' ? 'active' : ''; ?>" id="bookings">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3>Bookings Management</h3>
-                            <div>
-                                <form method="GET" class="d-flex">
-                                    <input type="hidden" name="tab" value="bookings">
-                                    <div class="input-group search-box">
-                                        <input type="text" class="form-control" name="search" placeholder="Search bookings..." value="<?php echo $active_tab == 'bookings' ? htmlspecialchars($search_query) : ''; ?>">
-                                        <button class="btn btn-outline-secondary" type="submit">
-                                            <i class="bi bi-search"></i>
-                                        </button>
+                                        </div>
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addBookingModal">
-                            <i class="bi bi-plus"></i> Add Booking
-                        </button>
-
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>User</th>
-                                        <th>Package</th>
-                                        <th>Dates</th>
-                                        <th>Payment</th>
-                                        <th>Amount</th>
-                                        <th>Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php while ($booking = mysqli_fetch_assoc($bookings)):
-                                        $payment_details = json_decode($booking['payment_details'], true);
-                                    ?>
-                                        <tr>
-                                            <td><?php echo $booking['id']; ?></td>
-                                            <td>
-                                                <?php echo htmlspecialchars($booking['user_name']); ?><br>
-                                                <small class="text-muted"><?php echo htmlspecialchars($booking['phone']); ?></small>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($booking['package']); ?></td>
-                                            <td>
-                                                <?php echo date('M j', strtotime($booking['arrivals'])); ?> -
-                                                <?php echo date('M j, Y', strtotime($booking['leaving'])); ?><br>
-                                                <small><?php echo $booking['guests']; ?> guest(s)</small>
-                                            </td>
-                                            <td>
-                                                <?php if ($booking['payment_method'] == 'GCash'): ?>
-                                                    <img src="images/GCash_logo.png" class="payment-method-icon" alt="GCash">
-                                                <?php elseif ($booking['payment_method'] == 'Maya'): ?>
-                                                    <img src="images/Paymaya_logo.png" class="payment-method-icon" alt="Maya">
-                                                <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" class="payment-method-icon" alt="PayPal">
-                                                <?php endif; ?>
-                                                <?php echo $booking['payment_method']; ?>
-                                            </td>
-                                            <td>₱<?php echo number_format($booking['total_amount'], 2); ?></td>
-                                            <td>
-                                                <span class="status-badge status-<?php echo strtolower($booking['status']); ?>">
-                                                    <?php echo $booking['status']; ?>
-                                                </span>
-                                                <?php if ($booking['reference_number']): ?>
-                                                    <br><small>Ref: <?php echo $booking['reference_number']; ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="actionDropdown<?php echo $booking['id']; ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        Actions
-                                                    </button>
-                                                    <ul class="dropdown-menu" aria-labelledby="actionDropdown<?php echo $booking['id']; ?>">
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editBookingModal<?php echo $booking['id']; ?>">
-                                                                <i class="bi bi-pencil"></i> Edit Booking
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#paymentDetailsModal<?php echo $booking['id']; ?>">
-                                                                <i class="bi bi-credit-card"></i> Payment Details
-                                                            </a>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
-                                                        <li>
-                                                            <form method="POST" action="admin.php?tab=bookings" class="mb-0">
-                                                                <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
-                                                                <div class="px-3 py-1">
-                                                                    <label class="form-label small">Quick Status Update</label>
-                                                                    <select name="status" class="form-select form-select-sm status-dropdown" onchange="this.form.submit()">
-                                                                        <option value="Pending" <?php echo $booking['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
-                                                                        <option value="Paid" <?php echo $booking['status'] == 'Paid' ? 'selected' : ''; ?>>Paid</option>
-                                                                        <option value="Completed" <?php echo $booking['status'] == 'Completed' ? 'selected' : ''; ?>>Completed</option>
-                                                                        <option value="Cancelled" <?php echo $booking['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
-                                                                    </select>
-                                                                    <input type="hidden" name="update_booking_status" value="1">
-                                                                </div>
-                                                            </form>
-                                                        </li>
-                                                        <li>
-                                                            <hr class="dropdown-divider">
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteBookingModal<?php echo $booking['id']; ?>">
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Created At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($user = mysqli_fetch_assoc($users)): ?>
+                                                    <tr class="fade-in">
+                                                        <td><?php echo $user['id']; ?></td>
+                                                        <td><?php echo htmlspecialchars($user['name']); ?></td>
+                                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                                        <td><?php echo date('M d, Y', strtotime($user['created_at'])); ?></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editUserModal<?php echo $user['id']; ?>">
+                                                                <i class="bi bi-pencil-square"></i> Edit
+                                                            </button>
+                                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal<?php echo $user['id']; ?>">
                                                                 <i class="bi bi-trash"></i> Delete
-                                                            </a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
 
-                                        <!-- Payment Details Modal -->
-                                        <div class="modal fade" id="paymentDetailsModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Payment Details</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <!-- Edit User Modal -->
+                                                    <div class="modal fade" id="editUserModal<?php echo $user['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Edit User</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=users">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                                        <div class="mb-3">
+                                                                            <label for="name" class="form-label">Name</label>
+                                                                            <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label for="email" class="form-label">Email</label>
+                                                                            <input type="email" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="submit" name="edit_user" class="btn btn-primary">Save changes</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <table class="table payment-details-table">
-                                                            <tr>
-                                                                <th>Payment Method:</th>
-                                                                <td>
-                                                                    <?php if ($booking['payment_method'] == 'GCash'): ?>
-                                                                        <img src="images/GCash_logo.png" class="payment-method-icon" alt="GCash">
-                                                                    <?php elseif ($booking['payment_method'] == 'Maya'): ?>
-                                                                        <img src="images/Paymaya_logo.png" class="payment-method-icon" alt="Maya">
-                                                                    <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
-                                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" class="payment-method-icon" alt="PayPal">
-                                                                    <?php endif; ?>
-                                                                    <?php echo $booking['payment_method']; ?>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Status:</th>
-                                                                <td>
-                                                                    <span class="status-badge status-<?php echo strtolower($booking['status']); ?>">
-                                                                        <?php echo $booking['status']; ?>
-                                                                    </span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Amount:</th>
-                                                                <td>₱<?php echo number_format($booking['total_amount'], 2); ?></td>
-                                                            </tr>
+
+                                                    <!-- Delete User Modal -->
+                                                    <div class="modal fade" id="deleteUserModal<?php echo $user['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Delete User</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=users">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="user_id" value="<?php echo $user['id']; ?>">
+                                                                        <p>Are you sure you want to delete this user: <?php echo htmlspecialchars($user['name']); ?>?</p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="submit" name="delete_user" class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endwhile; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <?php if ($user_page > 1): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=users&user_page=<?php echo $user_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php for ($i = 1; $i <= $total_user_pages; $i++): ?>
+                                                <li class="page-item <?php echo $i == $user_page ? 'active' : ''; ?>">
+                                                    <a class="page-link" href="?tab=users&user_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
+                                                </li>
+                                            <?php endfor; ?>
+
+                                            <?php if ($user_page < $total_user_pages): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=users&user_page=<?php echo $user_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </nav>
+
+                                    <div class="text-center text-muted">
+                                        Showing <?php echo ($user_offset + 1) . ' to ' . min($user_offset + $records_per_page, $total_users); ?> of <?php echo $total_users; ?> users
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Packages Tab -->
+                        <div class="col-12 <?php echo $active_tab == 'packages' ? '' : 'd-none'; ?>">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Packages Management</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Actions:</div>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bi bi-plus"></i> Add Package
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bi bi-download"></i> Export Data
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Package Name</th>
+                                                    <th>Description</th>
+                                                    <th>Price</th>
+                                                    <th>Availability</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($package = mysqli_fetch_assoc($packages)): ?>
+                                                    <tr class="fade-in">
+                                                        <td><?php echo $package['id']; ?></td>
+                                                        <td><?php echo htmlspecialchars($package['package_name']); ?></td>
+                                                        <td><?php echo htmlspecialchars($package['description']); ?></td>
+                                                        <td>₱<?php echo number_format($package['price'], 2); ?></td>
+                                                        <td>
+                                                            <?php if ($package['availability']): ?>
+                                                                <span class="badge bg-success">Available</span>
+                                                            <?php else: ?>
+                                                                <span class="badge bg-secondary">Not Available</span>
+                                                            <?php endif; ?>
+                                                        </td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editPackageModal<?php echo $package['id']; ?>">
+                                                                <i class="bi bi-pencil-square"></i> Edit
+                                                            </button>
+                                                            <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deletePackageModal<?php echo $package['id']; ?>">
+                                                                <i class="bi bi-trash"></i> Delete
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+
+                                                    <!-- Edit Package Modal -->
+                                                    <div class="modal fade" id="editPackageModal<?php echo $package['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Edit Package</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=packages">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="package_id" value="<?php echo $package['id']; ?>">
+                                                                        <div class="mb-3">
+                                                                            <label for="package_name" class="form-label">Package Name</label>
+                                                                            <input type="text" class="form-control" id="package_name" name="package_name" value="<?php echo htmlspecialchars($package['package_name']); ?>" required>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label for="description" class="form-label">Description</label>
+                                                                            <textarea class="form-control" id="description" name="description" rows="3" required><?php echo htmlspecialchars($package['description']); ?></textarea>
+                                                                        </div>
+                                                                        <div class="mb-3">
+                                                                            <label for="price" class="form-label">Price</label>
+                                                                            <input type="number" step="0.01" class="form-control" id="price" name="price" value="<?php echo $package['price']; ?>" required>
+                                                                        </div>
+                                                                        <div class="mb-3 form-check form-switch">
+                                                                            <input class="form-check-input" type="checkbox" id="availability" name="availability" <?php echo $package['availability'] ? 'checked' : ''; ?>>
+                                                                            <label class="form-check-label" for="availability">Available</label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="submit" name="edit_package" class="btn btn-primary">Save changes</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Delete Package Modal -->
+                                                    <div class="modal fade" id="deletePackageModal<?php echo $package['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Delete Package</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=packages">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="package_id" value="<?php echo $package['id']; ?>">
+                                                                        <p>Are you sure you want to delete this package: <?php echo htmlspecialchars($package['package_name']); ?>?</p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="submit" name="delete_package" class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endwhile; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <?php if ($package_page > 1): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=packages&package_page=<?php echo $package_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+
+                                            <?php for ($i = 1; $i <= $total_package_pages; $i++): ?>
+                                                <li class="page-item <?php echo $i == $package_page ? 'active' : ''; ?>">
+                                                    <a class="page-link" href="?tab=packages&package_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
+                                                </li>
+                                            <?php endfor; ?>
+
+                                            <?php if ($package_page < $total_package_pages): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=packages&package_page=<?php echo $package_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </nav>
+
+                                    <div class="text-center text-muted">
+                                        Showing <?php echo ($package_offset + 1) . ' to ' . min($package_offset + $records_per_page, $total_packages); ?> of <?php echo $total_packages; ?> packages
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bookings Tab -->
+                        <div class="col-12 <?php echo $active_tab == 'bookings' ? '' : 'd-none'; ?>">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Bookings Management</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-three-dots-vertical text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Actions:</div>
+                                            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addBookingModal">
+                                                <i class="bi bi-plus"></i> Add Booking
+                                            </a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bi bi-download"></i> Export Data
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" width="100%" cellspacing="0">
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>User</th>
+                                                    <th>Package</th>
+                                                    <th>Dates</th>
+                                                    <th>Payment</th>
+                                                    <th>Amount</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php while ($booking = mysqli_fetch_assoc($bookings)):
+                                                    $payment_details = json_decode($booking['payment_details'], true);
+                                                ?>
+                                                    <tr class="fade-in">
+                                                        <td><?php echo $booking['id']; ?></td>
+                                                        <td>
+                                                            <strong><?php echo htmlspecialchars($booking['user_name']); ?></strong><br>
+                                                            <small class="text-muted"><?php echo htmlspecialchars($booking['phone']); ?></small>
+                                                        </td>
+                                                        <td><?php echo htmlspecialchars($booking['package']); ?></td>
+                                                        <td>
+                                                            <?php echo date('M j', strtotime($booking['arrivals'])); ?> - 
+                                                            <?php echo date('M j, Y', strtotime($booking['leaving'])); ?><br>
+                                                            <small><?php echo $booking['guests']; ?> guest(s)</small>
+                                                        </td>
+                                                        <td>
+                                                            <?php if ($booking['payment_method'] == 'GCash'): ?>
+                                                                <img src="images/GCash_logo.png" class="payment-method-icon" alt="GCash">
+                                                            <?php elseif ($booking['payment_method'] == 'Maya'): ?>
+                                                                <img src="images/Paymaya_logo.png" class="payment-method-icon" alt="Maya">
+                                                            <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
+                                                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" class="payment-method-icon" alt="PayPal">
+                                                            <?php endif; ?>
+                                                            <?php echo $booking['payment_method']; ?>
+                                                        </td>
+                                                        <td>₱<?php echo number_format($booking['total_amount'], 2); ?></td>
+                                                        <td>
+                                                            <span class="status-badge status-<?php echo strtolower($booking['status']); ?>">
+                                                                <?php echo $booking['status']; ?>
+                                                            </span>
                                                             <?php if ($booking['reference_number']): ?>
-                                                                <tr>
-                                                                    <th>Reference #:</th>
-                                                                    <td><?php echo $booking['reference_number']; ?></td>
-                                                                </tr>
+                                                                <br><small>Ref: <?php echo $booking['reference_number']; ?></small>
                                                             <?php endif; ?>
-                                                            <?php if ($payment_details): ?>
-                                                                <?php foreach ($payment_details as $key => $value): ?>
-                                                                    <tr>
-                                                                        <th><?php echo ucfirst(str_replace('_', ' ', $key)); ?>:</th>
-                                                                        <td><?php echo htmlspecialchars($value); ?></td>
-                                                                    </tr>
-                                                                <?php endforeach; ?>
-                                                            <?php endif; ?>
-                                                        </table>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Edit Booking Modal -->
-                                        <div class="modal fade" id="editBookingModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Booking</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <form method="POST" action="admin.php?tab=bookings">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
-
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="user_id" class="form-label">User</label>
-                                                                    <select class="form-select" id="user_id" name="user_id" required>
-                                                                        <?php
-                                                                        $users_for_select = mysqli_query($connection, "SELECT * FROM users");
-                                                                        while ($user = mysqli_fetch_assoc($users_for_select)):
-                                                                        ?>
-                                                                            <option value="<?php echo $user['id']; ?>" <?php echo $user['id'] == $booking['user_id'] ? 'selected' : ''; ?>>
-                                                                                <?php echo htmlspecialchars($user['name']); ?>
-                                                                            </option>
-                                                                        <?php endwhile; ?>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="package" class="form-label">Package</label>
-                                                                    <select class="form-select" id="package" name="package" required>
-                                                                        <?php
-                                                                        $packages_for_select = mysqli_query($connection, "SELECT * FROM packages");
-                                                                        while ($package = mysqli_fetch_assoc($packages_for_select)):
-                                                                        ?>
-                                                                            <option value="<?php echo htmlspecialchars($package['package_name']); ?>" <?php echo $package['package_name'] == $booking['package'] ? 'selected' : ''; ?>>
-                                                                                <?php echo htmlspecialchars($package['package_name']); ?>
-                                                                                (₱<?php echo number_format($package['price'], 2); ?>)
-                                                                            </option>
-                                                                        <?php endwhile; ?>
-                                                                    </select>
-                                                                </div>
+                                                        </td>
+                                                        <td>
+                                                            <div class="dropdown">
+                                                                <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                                    <i class="bi bi-gear"></i> Actions
+                                                                </button>
+                                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editBookingModal<?php echo $booking['id']; ?>">
+                                                                            <i class="bi bi-pencil"></i> Edit Booking
+                                                                        </a>
+                                                                    </li>
+                                                                    <li>
+                                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#paymentDetailsModal<?php echo $booking['id']; ?>">
+                                                                            <i class="bi bi-credit-card"></i> Payment Details
+                                                                        </a>
+                                                                    </li>
+                                                                    <li><hr class="dropdown-divider"></li>
+                                                                    <li>
+                                                                        <form method="POST" action="admin.php?tab=bookings" class="px-3 py-1">
+                                                                            <label class="form-label small">Quick Status Update</label>
+                                                                            <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                                                                                <option value="Pending" <?php echo $booking['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                                                                <option value="Paid" <?php echo $booking['status'] == 'Paid' ? 'selected' : ''; ?>>Paid</option>
+                                                                                <option value="Completed" <?php echo $booking['status'] == 'Completed' ? 'selected' : ''; ?>>Completed</option>
+                                                                                <option value="Cancelled" <?php echo $booking['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                                                            </select>
+                                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                                            <input type="hidden" name="update_booking_status" value="1">
+                                                                        </form>
+                                                                    </li>
+                                                                    <li><hr class="dropdown-divider"></li>
+                                                                    <li>
+                                                                        <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteBookingModal<?php echo $booking['id']; ?>">
+                                                                            <i class="bi bi-trash"></i> Delete
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
                                                             </div>
+                                                        </td>
+                                                    </tr>
 
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="phone" class="form-label">Phone</label>
-                                                                    <input type="text" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($booking['phone']); ?>" required>
+                                                    <!-- Payment Details Modal -->
+                                                    <div class="modal fade" id="paymentDetailsModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Payment Details</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="guests" class="form-label">Guests</label>
-                                                                    <input type="number" class="form-control" id="guests" name="guests" value="<?php echo $booking['guests']; ?>" required>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label for="address" class="form-label">Address</label>
-                                                                <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($booking['address']); ?>" required>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="arrivals" class="form-label">Arrival Date</label>
-                                                                    <input type="date" class="form-control" id="arrivals" name="arrivals" value="<?php echo $booking['arrivals']; ?>" required>
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="leaving" class="form-label">Leaving Date</label>
-                                                                    <input type="date" class="form-control" id="leaving" name="leaving" value="<?php echo $booking['leaving']; ?>" required>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="status" class="form-label">Status</label>
-                                                                    <select class="form-select" id="status" name="status" required>
-                                                                        <option value="Pending" <?php echo $booking['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
-                                                                        <option value="Paid" <?php echo $booking['status'] == 'Paid' ? 'selected' : ''; ?>>Paid</option>
-                                                                        <option value="Completed" <?php echo $booking['status'] == 'Completed' ? 'selected' : ''; ?>>Completed</option>
-                                                                        <option value="Cancelled" <?php echo $booking['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
-                                                                    </select>
-                                                                </div>
-                                                                <div class="col-md-6 mb-3">
-                                                                    <label for="reference_number" class="form-label">Reference Number</label>
-                                                                    <input type="text" class="form-control" id="reference_number" name="reference_number" value="<?php echo htmlspecialchars($booking['reference_number']); ?>">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Payment Method</label>
-                                                                <div class="payment-methods">
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="radio" name="payment_method" id="gcash<?php echo $booking['id']; ?>" value="GCash" <?php echo $booking['payment_method'] == 'GCash' ? 'checked' : ''; ?>>
-                                                                        <label class="form-check-label" for="gcash<?php echo $booking['id']; ?>">
-                                                                            <img src="images/GCash_logo.png" height="20" alt="GCash">
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="radio" name="payment_method" id="maya<?php echo $booking['id']; ?>" value="Maya" <?php echo $booking['payment_method'] == 'Maya' ? 'checked' : ''; ?>>
-                                                                        <label class="form-check-label" for="maya<?php echo $booking['id']; ?>">
-                                                                            <img src="images/Paymaya_logo.png" height="20" alt="Maya">
-                                                                        </label>
-                                                                    </div>
-                                                                    <div class="form-check">
-                                                                        <input class="form-check-input" type="radio" name="payment_method" id="paypal<?php echo $booking['id']; ?>" value="PayPal" <?php echo $booking['payment_method'] == 'PayPal' ? 'checked' : ''; ?>>
-                                                                        <label class="form-check-label" for="paypal<?php echo $booking['id']; ?>">
-                                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" height="20" alt="PayPal">
-                                                                        </label>
+                                                                <div class="modal-body">
+                                                                    <div class="table-responsive">
+                                                                        <table class="table table-bordered">
+                                                                            <tr>
+                                                                                <th>Payment Method:</th>
+                                                                                <td>
+                                                                                    <?php if ($booking['payment_method'] == 'GCash'): ?>
+                                                                                        <img src="images/GCash_logo.png" class="payment-method-icon" alt="GCash">
+                                                                                    <?php elseif ($booking['payment_method'] == 'Maya'): ?>
+                                                                                        <img src="images/Paymaya_logo.png" class="payment-method-icon" alt="Maya">
+                                                                                    <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
+                                                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" class="payment-method-icon" alt="PayPal">
+                                                                                    <?php endif; ?>
+                                                                                    <?php echo $booking['payment_method']; ?>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th>Status:</th>
+                                                                                <td>
+                                                                                    <span class="status-badge status-<?php echo strtolower($booking['status']); ?>">
+                                                                                        <?php echo $booking['status']; ?>
+                                                                                    </span>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th>Amount:</th>
+                                                                                <td>₱<?php echo number_format($booking['total_amount'], 2); ?></td>
+                                                                            </tr>
+                                                                            <?php if ($booking['reference_number']): ?>
+                                                                                <tr>
+                                                                                    <th>Reference #:</th>
+                                                                                    <td><?php echo $booking['reference_number']; ?></td>
+                                                                                </tr>
+                                                                            <?php endif; ?>
+                                                                            <?php if ($payment_details): ?>
+                                                                                <?php foreach ($payment_details as $key => $value): ?>
+                                                                                    <tr>
+                                                                                        <th><?php echo ucfirst(str_replace('_', ' ', $key)); ?>:</th>
+                                                                                        <td><?php echo htmlspecialchars($value); ?></td>
+                                                                                    </tr>
+                                                                                <?php endforeach; ?>
+                                                                            <?php endif; ?>
+                                                                        </table>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-
-                                                            <div id="paymentDetailsContainer<?php echo $booking['id']; ?>">
-                                                                <?php if ($booking['payment_method'] == 'GCash'): ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="gcash_number" class="form-label">GCash Number</label>
-                                                                            <input type="text" class="form-control" id="gcash_number" name="gcash_number" value="<?php echo htmlspecialchars($payment_details['number'] ?? ''); ?>" pattern="^09\d{9}$" maxlength="11">
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="gcash_name" class="form-label">Account Name</label>
-                                                                            <input type="text" class="form-control" id="gcash_name" name="gcash_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                <?php elseif ($booking['payment_method'] == 'Maya'): ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="maya_number" class="form-label">Maya Number</label>
-                                                                            <input type="text" class="form-control" id="maya_number" name="maya_number" value="<?php echo htmlspecialchars($payment_details['number'] ?? ''); ?>" pattern="^09\d{9}$" maxlength="11">
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="maya_name" class="form-label">Account Name</label>
-                                                                            <input type="text" class="form-control" id="maya_name" name="maya_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
-                                                                    <div class="row">
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="paypal_email" class="form-label">PayPal Email</label>
-                                                                            <input type="email" class="form-control" id="paypal_email" name="paypal_email" value="<?php echo htmlspecialchars($payment_details['email'] ?? ''); ?>">
-                                                                        </div>
-                                                                        <div class="col-md-6 mb-3">
-                                                                            <label for="paypal_name" class="form-label">Account Name</label>
-                                                                            <input type="text" class="form-control" id="paypal_name" name="paypal_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
-                                                                        </div>
-                                                                    </div>
-                                                                <?php endif; ?>
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" name="edit_booking" class="btn btn-primary">Save changes</button>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Delete Booking Modal -->
-                                        <div class="modal fade" id="deleteBookingModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Delete Booking</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
-                                                    <form method="POST" action="admin.php?tab=bookings">
-                                                        <div class="modal-body">
-                                                            <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
-                                                            <p>Are you sure you want to delete this booking for <?php echo htmlspecialchars($booking['user_name']); ?>?</p>
+
+                                                    <!-- Edit Booking Modal -->
+                                                    <div class="modal fade" id="editBookingModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Edit Booking</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=bookings">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="user_id" class="form-label">User</label>
+                                                                                <select class="form-select" id="user_id" name="user_id" required>
+                                                                                    <?php
+                                                                                    $users_for_select = mysqli_query($connection, "SELECT * FROM users");
+                                                                                    while ($user = mysqli_fetch_assoc($users_for_select)):
+                                                                                    ?>
+                                                                                        <option value="<?php echo $user['id']; ?>" <?php echo $user['id'] == $booking['user_id'] ? 'selected' : ''; ?>>
+                                                                                            <?php echo htmlspecialchars($user['name']); ?>
+                                                                                        </option>
+                                                                                    <?php endwhile; ?>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="package" class="form-label">Package</label>
+                                                                                <select class="form-select" id="package" name="package" required>
+                                                                                    <?php
+                                                                                    $packages_for_select = mysqli_query($connection, "SELECT * FROM packages");
+                                                                                    while ($package = mysqli_fetch_assoc($packages_for_select)):
+                                                                                    ?>
+                                                                                        <option value="<?php echo htmlspecialchars($package['package_name']); ?>" <?php echo $package['package_name'] == $booking['package'] ? 'selected' : ''; ?>>
+                                                                                            <?php echo htmlspecialchars($package['package_name']); ?>
+                                                                                            (₱<?php echo number_format($package['price'], 2); ?>)
+                                                                                        </option>
+                                                                                    <?php endwhile; ?>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="phone" class="form-label">Phone</label>
+                                                                                <input type="text" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($booking['phone']); ?>" required>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="guests" class="form-label">Guests</label>
+                                                                                <input type="number" class="form-control" id="guests" name="guests" value="<?php echo $booking['guests']; ?>" required>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="mb-3">
+                                                                            <label for="address" class="form-label">Address</label>
+                                                                            <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($booking['address']); ?>" required>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="arrivals" class="form-label">Arrival Date</label>
+                                                                                <input type="date" class="form-control" id="arrivals" name="arrivals" value="<?php echo $booking['arrivals']; ?>" required>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="leaving" class="form-label">Leaving Date</label>
+                                                                                <input type="date" class="form-control" id="leaving" name="leaving" value="<?php echo $booking['leaving']; ?>" required>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="row">
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="status" class="form-label">Status</label>
+                                                                                <select class="form-select" id="status" name="status" required>
+                                                                                    <option value="Pending" <?php echo $booking['status'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+                                                                                    <option value="Paid" <?php echo $booking['status'] == 'Paid' ? 'selected' : ''; ?>>Paid</option>
+                                                                                    <option value="Completed" <?php echo $booking['status'] == 'Completed' ? 'selected' : ''; ?>>Completed</option>
+                                                                                    <option value="Cancelled" <?php echo $booking['status'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                                                                                </select>
+                                                                            </div>
+                                                                            <div class="col-md-6 mb-3">
+                                                                                <label for="reference_number" class="form-label">Reference Number</label>
+                                                                                <input type="text" class="form-control" id="reference_number" name="reference_number" value="<?php echo htmlspecialchars($booking['reference_number']); ?>">
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="mb-3">
+                                                                            <label class="form-label">Payment Method</label>
+                                                                            <div class="payment-methods">
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="radio" name="payment_method" id="gcash<?php echo $booking['id']; ?>" value="GCash" <?php echo $booking['payment_method'] == 'GCash' ? 'checked' : ''; ?>>
+                                                                                    <label class="form-check-label" for="gcash<?php echo $booking['id']; ?>">
+                                                                                        <img src="images/GCash_logo.png" height="20" alt="GCash">
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="radio" name="payment_method" id="maya<?php echo $booking['id']; ?>" value="Maya" <?php echo $booking['payment_method'] == 'Maya' ? 'checked' : ''; ?>>
+                                                                                    <label class="form-check-label" for="maya<?php echo $booking['id']; ?>">
+                                                                                        <img src="images/Paymaya_logo.png" height="20" alt="Maya">
+                                                                                    </label>
+                                                                                </div>
+                                                                                <div class="form-check">
+                                                                                    <input class="form-check-input" type="radio" name="payment_method" id="paypal<?php echo $booking['id']; ?>" value="PayPal" <?php echo $booking['payment_method'] == 'PayPal' ? 'checked' : ''; ?>>
+                                                                                    <label class="form-check-label" for="paypal<?php echo $booking['id']; ?>">
+                                                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" height="20" alt="PayPal">
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div id="paymentDetailsContainer<?php echo $booking['id']; ?>">
+                                                                            <?php if ($booking['payment_method'] == 'GCash'): ?>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="gcash_number" class="form-label">GCash Number</label>
+                                                                                        <input type="text" class="form-control" id="gcash_number" name="gcash_number" value="<?php echo htmlspecialchars($payment_details['number'] ?? ''); ?>" pattern="^09\d{9}$" maxlength="11">
+                                                                                    </div>
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="gcash_name" class="form-label">Account Name</label>
+                                                                                        <input type="text" class="form-control" id="gcash_name" name="gcash_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
+                                                                                    </div>
+                                                                                </div>
+                                                                            <?php elseif ($booking['payment_method'] == 'Maya'): ?>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="maya_number" class="form-label">Maya Number</label>
+                                                                                        <input type="text" class="form-control" id="maya_number" name="maya_number" value="<?php echo htmlspecialchars($payment_details['number'] ?? ''); ?>" pattern="^09\d{9}$" maxlength="11">
+                                                                                    </div>
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="maya_name" class="form-label">Account Name</label>
+                                                                                        <input type="text" class="form-control" id="maya_name" name="maya_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
+                                                                                    </div>
+                                                                                </div>
+                                                                            <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="paypal_email" class="form-label">PayPal Email</label>
+                                                                                        <input type="email" class="form-control" id="paypal_email" name="paypal_email" value="<?php echo htmlspecialchars($payment_details['email'] ?? ''); ?>">
+                                                                                    </div>
+                                                                                    <div class="col-md-6 mb-3">
+                                                                                        <label for="paypal_name" class="form-label">Account Name</label>
+                                                                                        <input type="text" class="form-control" id="paypal_name" name="paypal_name" value="<?php echo htmlspecialchars($payment_details['name'] ?? ''); ?>">
+                                                                                    </div>
+                                                                                </div>
+                                                                            <?php endif; ?>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                        <button type="submit" name="edit_booking" class="btn btn-primary">Save changes</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                            <button type="submit" name="delete_booking" class="btn btn-danger">Delete</button>
+                                                    </div>
+
+                                                    <!-- Delete Booking Modal -->
+                                                    <div class="modal fade" id="deleteBookingModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Delete Booking</h5>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <form method="POST" action="admin.php?tab=bookings">
+                                                                    <div class="modal-body">
+                                                                        <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                                                        <p>Are you sure you want to delete this booking for <?php echo htmlspecialchars($booking['user_name']); ?>?</p>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                                        <button type="submit" name="delete_booking" class="btn btn-danger">Delete</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endwhile; ?>
-                                </tbody>
-                            </table>
+                                                    </div>
+                                                <?php endwhile; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
 
-                            <!-- Bookings Pagination -->
-                            <nav aria-label="Bookings pagination">
-                                <ul class="pagination justify-content-center">
-                                    <?php if ($booking_page > 1): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=bookings&booking_page=<?php echo $booking_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
+                                    <!-- Pagination -->
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <?php if ($booking_page > 1): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=bookings&booking_page=<?php echo $booking_page - 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Previous">
+                                                        <span aria-hidden="true">&laquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
 
-                                    <?php for ($i = 1; $i <= $total_booking_pages; $i++): ?>
-                                        <li class="page-item <?php echo $i == $booking_page ? 'active' : ''; ?>">
-                                            <a class="page-link" href="?tab=bookings&booking_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
-                                        </li>
-                                    <?php endfor; ?>
+                                            <?php for ($i = 1; $i <= $total_booking_pages; $i++): ?>
+                                                <li class="page-item <?php echo $i == $booking_page ? 'active' : ''; ?>">
+                                                    <a class="page-link" href="?tab=bookings&booking_page=<?php echo $i; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>"><?php echo $i; ?></a>
+                                                </li>
+                                            <?php endfor; ?>
 
-                                    <?php if ($booking_page < $total_booking_pages): ?>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?tab=bookings&booking_page=<?php echo $booking_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
-                                                <span aria-hidden="true">&raquo;</span>
-                                            </a>
-                                        </li>
-                                    <?php endif; ?>
-                                </ul>
-                            </nav>
+                                            <?php if ($booking_page < $total_booking_pages): ?>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?tab=bookings&booking_page=<?php echo $booking_page + 1; ?><?php echo $search_query ? '&search=' . urlencode($search_query) : ''; ?>" aria-label="Next">
+                                                        <span aria-hidden="true">&raquo;</span>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </nav>
 
-                            <div class="text-muted text-center">
-                                Showing <?php echo ($booking_offset + 1) . ' to ' . min($booking_offset + $records_per_page, $total_bookings); ?> of <?php echo $total_bookings; ?> bookings
+                                    <div class="text-center text-muted">
+                                        Showing <?php echo ($booking_offset + 1) . ' to ' . min($booking_offset + $records_per_page, $total_bookings); ?> of <?php echo $total_bookings; ?> bookings
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Calendar Tab
-                    <div class="tab-pane <?php echo $active_tab == 'calendar' ? 'active' : ''; ?>" id="calendar">
-                       <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h3>Booking Calendar</h3>
-                            <div>
-                                <button class="btn btn-primary" id="prev-month">
-                                    <i class="bi bi-chevron-left"></i> Previous
-                                </button>
-                                <button class="btn btn-primary" id="next-month">
-                                    Next <i class="bi bi-chevron-right"></i>
-                                </button>
-                                <button class="btn btn-secondary" id="today-btn">
-                                    Today
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="text-center mb-3">
-                            <h4 id="current-month"></h4>
-                        </div>
-
-                        <div id="calendar-container">
-                            <div id="calendar-header" class="row g-0 text-center bg-dark text-white">
-                                <div class="col day-header">Sunday</div>
-                                <div class="col day-header">Monday</div>
-                                <div class="col day-header">Tuesday</div>
-                                <div class="col day-header">Wednesday</div>
-                                <div class="col day-header">Thursday</div>
-                                <div class="col day-header">Friday</div>
-                                <div class="col day-header">Saturday</div>
-                            </div>
-                            <div id="calendar-body" class="row g-0 border">
-                                <!-- Calendar cells will be generated by JavaScript -->
-                            </div>
-                        </div>
-                    </div> -->
                     </div>
                 </div>
-            </div>
+                <!-- /.container-fluid -->
+            </main>
+            <!-- End of Main Content -->
         </div>
     </div>
 
@@ -1216,9 +1421,9 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="admin.php?tab=users">
                     <div class="modal-body">
@@ -1248,9 +1453,9 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
     <div class="modal fade" id="addBookingModal" tabindex="-1" aria-labelledby="addBookingModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="addBookingModalLabel">Add New Booking</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="admin.php?tab=bookings" id="addBookingForm">
                     <div class="modal-body">
@@ -1363,6 +1568,13 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toggle the side navigation
+        document.getElementById('sidebarToggleTop').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.toggle('sidebar-toggled');
+            document.getElementById('sidebarMenu').classList.toggle('collapse');
+        });
+
         // Activate tab based on URL parameter
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -1502,377 +1714,6 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
                         break;
                 }
             }
-        });
-
-        // Calendar functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            let currentDate = new Date();
-
-            // Helper function to format date as YYYY-MM-DD
-            function formatDate(date) {
-                const d = new Date(date);
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
-            }
-
-            // Function to show booking details in a modal
-            function showBookingDetails(date) {
-                // Show loading indicator
-                const loadingHTML = `
-                <div class="modal fade" id="bookingDetailsModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-body text-center py-4">
-                                <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                                <p class="mt-2">Loading booking details...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-                document.body.insertAdjacentHTML('beforeend', loadingHTML);
-                const loadingModal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
-                loadingModal.show();
-
-                fetch(`get_bookings.php?date=${date}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(bookings => {
-                        // Remove loading modal
-                        document.getElementById('bookingDetailsModal').remove();
-
-                        // Create modal HTML
-                        let modalHTML = `
-                        <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-primary text-white">
-                                        <h5 class="modal-title">Bookings for ${date}</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <div class="row">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="card h-100">
-                                                    <div class="card-header bg-info text-white">
-                                                        <h6 class="mb-0">Arrivals</h6>
-                                                    </div>
-                                                    <div class="card-body p-0">
-                                                        <div class="list-group list-group-flush" id="arrivals-list">
-                    `;
-
-                        // Filter arrivals (bookings that start on this date)
-                        const arrivals = Array.isArray(bookings) ? bookings.filter(booking => booking.arrivals === date) : [];
-
-                        if (arrivals.length > 0) {
-                            arrivals.forEach(booking => {
-                                modalHTML += `
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">${booking.user_name}</h6>
-                                            <small class="text-muted">${booking.package}</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">${booking.guests}</span>
-                                    </div>
-                                    <small class="d-block mt-1"><i class="bi bi-telephone"></i> ${booking.phone}</small>
-                                </div>
-                            `;
-                            });
-                        } else {
-                            modalHTML += '<div class="list-group-item text-muted">No arrivals</div>';
-                        }
-
-                        modalHTML += `
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="card h-100">
-                                                    <div class="card-header bg-warning text-dark">
-                                                        <h6 class="mb-0">Departures</h6>
-                                                    </div>
-                                                    <div class="card-body p-0">
-                                                        <div class="list-group list-group-flush" id="departures-list">
-                    `;
-
-                        // Filter departures (bookings that end on this date)
-                        const departures = Array.isArray(bookings) ? bookings.filter(booking => booking.leaving === date) : [];
-
-                        if (departures.length > 0) {
-                            departures.forEach(booking => {
-                                modalHTML += `
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">${booking.user_name}</h6>
-                                            <small class="text-muted">${booking.package}</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">${booking.guests}</span>
-                                    </div>
-                                    <small class="d-block mt-1"><i class="bi bi-telephone"></i> ${booking.phone}</small>
-                                </div>
-                            `;
-                            });
-                        } else {
-                            modalHTML += '<div class="list-group-item text-muted">No departures</div>';
-                        }
-
-                        modalHTML += `
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="card">
-                                            <div class="card-header bg-success text-white">
-                                                <h6 class="mb-0">Current Guests</h6>
-                                            </div>
-                                            <div class="card-body p-0">
-                                                <div class="list-group list-group-flush" id="current-guests-list">
-                    `;
-
-                        // Filter current guests (bookings that span this date)
-                        const currentGuests = Array.isArray(bookings) ?
-                            bookings.filter(booking => booking.arrivals <= date && booking.leaving >= date) : [];
-
-                        if (currentGuests.length > 0) {
-                            currentGuests.forEach(booking => {
-                                modalHTML += `
-                                <div class="list-group-item">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">${booking.user_name}</h6>
-                                            <small class="text-muted">${booking.package}</small>
-                                        </div>
-                                        <span class="badge bg-primary rounded-pill">${booking.guests}</span>
-                                    </div>
-                                    <div class="mt-2">
-                                        <small class="d-block"><i class="bi bi-calendar"></i> ${booking.arrivals} to ${booking.leaving}</small>
-                                        <small class="d-block"><i class="bi bi-telephone"></i> ${booking.phone}</small>
-                                    </div>
-                                </div>
-                            `;
-                            });
-                        } else {
-                            modalHTML += '<div class="list-group-item text-muted">No current guests</div>';
-                        }
-
-                        modalHTML += `
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                        // Add modal to DOM
-                        document.body.insertAdjacentHTML('beforeend', modalHTML);
-                        const detailsModal = new bootstrap.Modal(document.getElementById('bookingDetailsModal'));
-                        detailsModal.show();
-
-                        // Clean up modal when closed
-                        document.getElementById('bookingDetailsModal').addEventListener('hidden.bs.modal', function() {
-                            this.remove();
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Booking details error:', error);
-
-                        // Remove loading modal if it exists
-                        const existingModal = document.getElementById('bookingDetailsModal');
-                        if (existingModal) existingModal.remove();
-
-                        // Show error modal
-                        const errorHTML = `
-                        <div class="modal fade" id="bookingDetailsModal" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-danger text-white">
-                                        <h5 class="modal-title">Error</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Failed to load booking details.</p>
-                                        <div class="alert alert-danger mt-3">
-                                            <small>${error.message}</small>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="window.location.reload()">Try Again</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-
-                        document.body.insertAdjacentHTML('beforeend', errorHTML);
-                        new bootstrap.Modal(document.getElementById('bookingDetailsModal')).show();
-                    });
-            }
-
-            // Initialize calendar
-            function renderCalendar(date) {
-                const calendarBody = document.getElementById('calendar-body');
-                calendarBody.innerHTML = '';
-
-                // Get first day of month and total days
-                const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
-                const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-                const daysInMonth = lastDay.getDate();
-
-                // Get starting day of week (0-6)
-                let startDay = firstDay.getDay();
-
-                // Create calendar cells
-                let dayCount = 1;
-                let calendarHTML = '';
-
-                // Create 6 rows (weeks)
-                for (let i = 0; i < 6; i++) {
-                    calendarHTML += '<div class="row g-0">';
-
-                    // Create 7 cells (days) per week
-                    for (let j = 0; j < 7; j++) {
-                        if ((i === 0 && j < startDay) || dayCount > daysInMonth) {
-                            // Previous or next month days
-                            const prevMonthDays = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
-                            const dayNum = (i === 0 && j < startDay) ?
-                                (prevMonthDays - startDay + j + 1) :
-                                (dayCount - daysInMonth);
-
-                            calendarHTML += `
-                            <div class="col calendar-day other-month">
-                                <div class="day-number">${dayNum}</div>
-                            </div>
-                        `;
-                        } else {
-                            // Current month days
-                            const currentDay = new Date(date.getFullYear(), date.getMonth(), dayCount);
-                            const isToday = currentDay.toDateString() === new Date().toDateString();
-
-                            calendarHTML += `
-                            <div class="col calendar-day ${isToday ? 'today' : ''}" 
-                                 data-date="${formatDate(currentDay)}">
-                                <div class="day-number">${dayCount}</div>
-                                <div class="day-events" id="events-${formatDate(currentDay)}"></div>
-                            </div>
-                        `;
-                            dayCount++;
-                        }
-                    }
-
-                    calendarHTML += '</div>';
-                }
-
-                calendarBody.innerHTML = calendarHTML;
-
-                // Load bookings for the month
-                loadBookingsForMonth(date);
-
-                // Update month/year display
-                document.getElementById('current-month').textContent =
-                    date.toLocaleString('default', {
-                        month: 'long',
-                        year: 'numeric'
-                    });
-            }
-
-            // Load bookings for the month
-            function loadBookingsForMonth(date) {
-                const month = date.getMonth() + 1;
-                const year = date.getFullYear();
-
-                // Debug log
-                console.log(`Fetching bookings for month: ${month}, year: ${year}`);
-
-                fetch(`get_bookings.php?month=${month}&year=${year}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(bookings => {
-                        console.log('Received bookings:', bookings); // Debug log
-                        if (!Array.isArray(bookings)) {
-                            throw new Error('Invalid data received');
-                        }
-
-                        bookings.forEach(booking => {
-                            const eventElement = document.createElement('div');
-                            eventElement.className = 'booking-event';
-                            eventElement.title = `${booking.package} - ${booking.user_name}\n${booking.arrivals} to ${booking.leaving}`;
-                            eventElement.innerHTML = `
-                    <strong>${booking.package}</strong><br>
-                    ${booking.user_name}
-                `;
-
-                            const arrivalDate = new Date(booking.arrivals);
-                            const leavingDate = new Date(booking.leaving);
-
-                            // Add event to all days in the booking range
-                            for (let d = new Date(arrivalDate); d <= leavingDate; d.setDate(d.getDate() + 1)) {
-                                const dateStr = formatDate(d);
-                                const eventsContainer = document.getElementById(`events-${dateStr}`);
-                                if (eventsContainer) {
-                                    eventsContainer.appendChild(eventElement.cloneNode(true));
-                                }
-                            }
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading bookings:', error);
-                        // Show error to user
-                        alert('Failed to load bookings. Please check console for details.');
-                    });
-            }
-
-            // Navigation buttons
-            document.getElementById('prev-month').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                renderCalendar(currentDate);
-            });
-
-            document.getElementById('next-month').addEventListener('click', function() {
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                renderCalendar(currentDate);
-            });
-
-            document.getElementById('today-btn').addEventListener('click', function() {
-                currentDate = new Date();
-                renderCalendar(currentDate);
-            });
-
-            // Add click event to calendar days
-            document.getElementById('calendar-body').addEventListener('click', function(e) {
-                const dayElement = e.target.closest('.calendar-day:not(.other-month)');
-                if (dayElement) {
-                    const date = dayElement.dataset.date;
-                    if (date) {
-                        showBookingDetails(date);
-                    }
-                }
-            });
-
-            // Initialize calendar
-            renderCalendar(currentDate);
         });
 
         // SCHEDULING VALIDATION
