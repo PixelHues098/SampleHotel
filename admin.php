@@ -12,6 +12,7 @@ $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'users';
 
 // Pagination settings
 $records_per_page = 5;
+$booking_records_per_page = 5;
 
 // Search functionality
 $search_query = '';
@@ -236,18 +237,18 @@ $total_package_pages = ceil($total_packages / $records_per_page);
 
 // BOOKINGS TAB
 $booking_page = isset($_GET['booking_page']) ? (int)$_GET['booking_page'] : 1;
-$booking_offset = ($booking_page - 1) * $records_per_page;
+$booking_offset = ($booking_page - 1) * $booking_records_per_page;
 
 $booking_query = "SELECT booking.*, users.name as user_name FROM booking LEFT JOIN users ON booking.user_id = users.id";
 if ($search_query && $active_tab == 'bookings') {
     $booking_query .= " WHERE users.name LIKE '%$search_query%' OR booking.package LIKE '%$search_query%' OR booking.phone LIKE '%$search_query%' OR booking.payment_method LIKE '%$search_query%' OR booking.status LIKE '%$search_query%'";
 }
-$booking_query .= " ORDER BY booking.created_at DESC LIMIT $booking_offset, $records_per_page";
+$booking_query .= " ORDER BY booking.created_at DESC LIMIT $booking_offset, $booking_records_per_page";
 
 $bookings = mysqli_query($connection, $booking_query);
 $total_bookings = mysqli_query($connection, "SELECT COUNT(*) as total FROM booking");
 $total_bookings = mysqli_fetch_assoc($total_bookings)['total'];
-$total_booking_pages = ceil($total_bookings / $records_per_page);
+$total_booking_pages = ceil($total_bookings / $booking_records_per_page);
 ?>
 
 <!DOCTYPE html>
@@ -541,7 +542,6 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
         .pagination .page-item.disabled .page-link {
             color: #6c757d;
         }
-
         /* Enhanced Booking Table Styles */
         .booking-table th {
             white-space: nowrap;
@@ -767,29 +767,7 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small"><?php echo $_SESSION['admin_username']; ?></span>
-                                <i class="bi bi-person-circle fs-4"></i>
-                            </a>
-                            <!-- Dropdown - User Information -->
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-person-fill mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="bi bi-gear-fill mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="logout.php">
-                                    <i class="bi bi-box-arrow-right mr-2 text-gray-400"></i>
-                                    Logout
-                                </a>
-                            </div>
-                        </li>
+                        
                     </ul>
                 </nav>
 
@@ -1232,54 +1210,7 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
                                                                     <h5 class="modal-title">Payment Details</h5>
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
-                                                                <div class="modal-body">
-                                                                    <div class="table-responsive">
-                                                                        <table class="table table-bordered">
-                                                                            <tr>
-                                                                                <th>Payment Method:</th>
-                                                                                <td>
-                                                                                    <?php if ($booking['payment_method'] == 'GCash'): ?>
-                                                                                        <img src="images/GCash_logo.png" class="payment-method-icon" alt="GCash">
-                                                                                    <?php elseif ($booking['payment_method'] == 'Maya'): ?>
-                                                                                        <img src="images/Paymaya_logo.png" class="payment-method-icon" alt="Maya">
-                                                                                    <?php elseif ($booking['payment_method'] == 'PayPal'): ?>
-                                                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1200px-PayPal.svg.png" class="payment-method-icon" alt="PayPal">
-                                                                                    <?php endif; ?>
-                                                                                    <?php echo $booking['payment_method']; ?>
-                                                                                </td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Status:</th>
-                                                                                <td>
-                                                                                    <span class="status-badge status-<?php echo strtolower($booking['status']); ?>">
-                                                                                        <?php echo $booking['status']; ?>
-                                                                                    </span>
-                                                                                </td>
-                                                                            </tr>
-                                                                            <tr>
-                                                                                <th>Amount:</th>
-                                                                                <td>₱<?php echo number_format($booking['total_amount'], 2); ?></td>
-                                                                            </tr>
-                                                                            <?php if ($booking['reference_number']): ?>
-                                                                                <tr>
-                                                                                    <th>Reference #:</th>
-                                                                                    <td><?php echo $booking['reference_number']; ?></td>
-                                                                                </tr>
-                                                                            <?php endif; ?>
-                                                                            <?php if ($payment_details): ?>
-                                                                                <?php foreach ($payment_details as $key => $value): ?>
-                                                                                    <tr>
-                                                                                        <th><?php echo ucfirst(str_replace('_', ' ', $key)); ?>:</th>
-                                                                                        <td><?php echo htmlspecialchars($value); ?></td>
-                                                                                    </tr>
-                                                                                <?php endforeach; ?>
-                                                                            <?php endif; ?>
-                                                                        </table>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer">
-                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                                </div>
+                                                                
                                                             </div>
                                                         </div>
                                                     </div>
