@@ -325,7 +325,6 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
         /* Main Content Styles */
         .main-content {
             padding: 2rem;
-            width: 100%;
         }
 
         .topbar {
@@ -541,6 +540,96 @@ $total_booking_pages = ceil($total_bookings / $records_per_page);
 
         .pagination .page-item.disabled .page-link {
             color: #6c757d;
+        }
+
+        /* Enhanced Booking Table Styles */
+        .booking-table th {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+        
+        .booking-table td {
+            vertical-align: middle;
+        }
+        
+        .booking-user-cell {
+            min-width: 180px;
+        }
+        
+        .booking-package-cell {
+            min-width: 150px;
+        }
+        
+        .booking-dates-cell {
+            min-width: 180px;
+        }
+        
+        .booking-payment-cell {
+            min-width: 120px;
+        }
+        
+        .booking-amount-cell {
+            min-width: 100px;
+            text-align: right;
+        }
+        
+        .booking-status-cell {
+            min-width: 120px;
+        }
+        
+        .booking-actions-cell {
+            min-width: 140px;
+        }
+        
+        .payment-method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        
+        .user-info {
+            line-height: 1.3;
+        }
+        
+        .user-info .user-name {
+            font-weight: 600;
+            display: block;
+        }
+        
+        .user-info .user-phone {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .dates-info {
+            line-height: 1.3;
+        }
+        
+        .dates-info .date-range {
+            font-weight: 500;
+            display: block;
+        }
+        
+        .dates-info .guests {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        /* Enhanced Payment Details Modal */
+        .payment-details-table th {
+            width: 30%;
+            white-space: nowrap;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .booking-table-container {
+                overflow-x: auto;
+            }
         }
 
         /* Form Styles */
