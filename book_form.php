@@ -64,26 +64,41 @@ try {
         throw new Exception("Package '$package' not found in database");
     }
 
-    // 2. Insert the booking record
-    $insert_query = "INSERT INTO booking (user_id, name, email, phone, address, package, guests, arrivals, leaving, payment_method, payment_details, reference_number, total_amount, status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";
+    // 2. Insert the booking record with all columns
+    $insert_query = "INSERT INTO booking (
+        user_id, 
+        name,
+        email,
+        phone, 
+        address, 
+        package, 
+        guests, 
+        arrivals, 
+        leaving,
+        payment_method,
+        payment_details,
+        reference_number,
+        total_amount,
+        status
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')";
     
     $stmt = $connection->prepare($insert_query);
     $payment_details_json = json_encode($payment_details);
     
-    $stmt->bind_param("isssssissssd", 
-        $user_id, 
-        $name, 
-        $email, 
-        $phone, 
-        $address, 
-        $package, 
-        $guests, 
-        $arrivals, 
-        $leaving, 
-        $payment_method, 
-        $payment_details_json, 
-        $reference_number, 
+    $stmt->bind_param(
+        "isssssisssssd", 
+        $user_id,
+        $name,
+        $email,
+        $phone,
+        $address,
+        $package,
+        $guests,
+        $arrivals,
+        $leaving,
+        $payment_method,
+        $payment_details_json,
+        $reference_number,
         $total_amount
     );
     
@@ -93,9 +108,6 @@ try {
 
     // Commit transaction if successful
     mysqli_commit($connection);
-    
-    // Send confirmation email (you would implement this function)
-    // sendBookingConfirmation($email, $name, $package, $arrivals, $leaving, $total_amount);
     
     echo "<script>
         alert('Booking successful! We will contact you for payment confirmation.');
