@@ -767,7 +767,6 @@ $total_booking_pages = ceil($total_bookings / $booking_records_per_page);
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-                        
                     </ul>
                 </nav>
 
@@ -1172,11 +1171,7 @@ $total_booking_pages = ceil($total_bookings / $booking_records_per_page);
                                                                             <i class="bi bi-pencil"></i> Edit Booking
                                                                         </a>
                                                                     </li>
-                                                                    <li>
-                                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#paymentDetailsModal<?php echo $booking['id']; ?>">
-                                                                            <i class="bi bi-credit-card"></i> Payment Details
-                                                                        </a>
-                                                                    </li>
+                                                                    
                                                                     <li><hr class="dropdown-divider"></li>
                                                                     <li>
                                                                         <form method="POST" action="admin.php?tab=bookings" class="px-3 py-1">
@@ -1202,19 +1197,7 @@ $total_booking_pages = ceil($total_bookings / $booking_records_per_page);
                                                         </td>
                                                     </tr>
 
-                                                    <!-- Payment Details Modal -->
-                                                    <div class="modal fade" id="paymentDetailsModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
-                                                        <div class="modal-dialog">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header">
-                                                                    <h5 class="modal-title">Payment Details</h5>
-                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                </div>
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
+                                                   
                                                     <!-- Edit Booking Modal -->
                                                     <div class="modal fade" id="editBookingModal<?php echo $booking['id']; ?>" tabindex="-1" aria-hidden="true">
                                                         <div class="modal-dialog modal-lg">
