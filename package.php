@@ -14,16 +14,16 @@ $packages = mysqli_fetch_all($result, MYSQLI_ASSOC);
 $userBookings = [];
 $hasPending = false;
 if (isset($_SESSION['user_id'])) {
-    $userId = $_SESSION['user_id'];
-    $bookingQuery = "SELECT package, status FROM booking WHERE user_id = '$userId' ORDER BY created_at DESC";
-    $bookingResult = mysqli_query($connection, $bookingQuery);
-    
-    while ($row = mysqli_fetch_assoc($bookingResult)) {
-        $userBookings[] = $row;
-        if ($row['status'] == 'Pending') {
-            $hasPending = true;
-        }
-    }
+   $userId = $_SESSION['user_id'];
+   $bookingQuery = "SELECT package, status FROM booking WHERE user_id = '$userId' ORDER BY created_at DESC";
+   $bookingResult = mysqli_query($connection, $bookingQuery);
+
+   while ($row = mysqli_fetch_assoc($bookingResult)) {
+      $userBookings[] = $row;
+      if ($row['status'] == 'Pending') {
+         $hasPending = true;
+      }
+   }
 }
 ?>
 
@@ -60,7 +60,7 @@ if (isset($_SESSION['user_id'])) {
          bottom: 20px;
          z-index: 1000;
       }
-      
+
       .booking-status-btn {
          background-color: <?php echo $hasPending ? '#f39c12' : '#3a86ff'; ?>;
          color: white;
@@ -75,11 +75,11 @@ if (isset($_SESSION['user_id'])) {
          font-size: 24px;
          transition: all 0.3s ease;
       }
-      
+
       .booking-status-btn:hover {
          transform: scale(1.1);
       }
-      
+
       .booking-status-badge {
          position: absolute;
          top: -5px;
@@ -94,7 +94,7 @@ if (isset($_SESSION['user_id'])) {
          align-items: center;
          font-size: 12px;
       }
-      
+
       .booking-modal {
          display: none;
          position: fixed;
@@ -105,7 +105,7 @@ if (isset($_SESSION['user_id'])) {
          height: 100%;
          background-color: rgba(0, 0, 0, 0.5);
       }
-      
+
       .booking-modal-content {
          background-color: #fefefe;
          margin: 10% auto;
@@ -115,7 +115,7 @@ if (isset($_SESSION['user_id'])) {
          max-width: 600px;
          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       }
-      
+
       .close-modal {
          color: #aaa;
          float: right;
@@ -123,38 +123,38 @@ if (isset($_SESSION['user_id'])) {
          font-weight: bold;
          cursor: pointer;
       }
-      
+
       .close-modal:hover {
          color: black;
       }
-      
+
       .booking-item {
          padding: 10px;
          border-bottom: 1px solid #eee;
          display: flex;
          justify-content: space-between;
       }
-      
+
       .status-pending {
          color: #f39c12;
          font-weight: bold;
       }
-      
+
       .status-paid {
          color: #27ae60;
          font-weight: bold;
       }
-      
+
       .status-completed {
          color: #3498db;
          font-weight: bold;
       }
-      
+
       .status-cancelled {
          color: #e74c3c;
          font-weight: bold;
       }
-      
+
       .booking-title {
          font-size: 24px;
          margin-bottom: 20px;
@@ -212,31 +212,40 @@ if (isset($_SESSION['user_id'])) {
    <!-- packages section ends -->
 
    <!-- Booking status floating component -->
-   <?php if (isset($_SESSION['user_id']) && !empty($userBookings)): ?>
-   <div class="booking-status-container">
-      <div class="booking-status-btn" id="bookingStatusBtn">
-         <i class="fas fa-calendar-check"></i>
-         <?php if ($hasPending): ?>
-            <div class="booking-status-badge">!</div>
-         <?php endif; ?>
+   <?php if (isset($_SESSION['user_id'])): ?>
+      <div class="booking-status-container">
+         <div class="booking-status-btn" id="bookingStatusBtn">
+            <i class="fas fa-calendar-check"></i>
+            <?php if ($hasPending): ?>
+               <div class="booking-status-badge">!</div>
+            <?php endif; ?>
+         </div>
       </div>
-   </div>
-   
-   <!-- Booking status modal -->
-   <div id="bookingModal" class="booking-modal">
-      <div class="booking-modal-content">
-         <span class="close-modal">&times;</span>
-         <h2 class="booking-title">Your Bookings</h2>
-         <?php foreach ($userBookings as $booking): ?>
-            <div class="booking-item">
-               <span><?php echo htmlspecialchars($booking['package']); ?></span>
-               <span class="status-<?php echo strtolower($booking['status']); ?>">
-                  <?php echo htmlspecialchars($booking['status']); ?>
-               </span>
-            </div>
-         <?php endforeach; ?>
+
+      <!-- Booking status modal -->
+      <div id="bookingModal" class="booking-modal">
+         <div class="booking-modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 class="booking-title">Your Bookings</h2>
+            <?php if (!empty($userBookings)): ?>
+               <?php foreach ($userBookings as $booking): ?>
+                  <div class="booking-item">
+                     <span><?php echo htmlspecialchars($booking['package']); ?></span>
+                     <span class="status-<?php echo strtolower($booking['status']); ?>">
+                        <?php echo htmlspecialchars($booking['status']); ?>
+                     </span>
+                  </div>
+               <?php endforeach; ?>
+            <?php else: ?>
+               <div class="no-bookings" style="text-align: center; padding: 20px;">
+                  <p style="font-size: 18px; color: #555; margin-bottom: 20px;">
+                     THERE ARE NO BOOKINGS MADE, BOOK NOW!
+                  </p>
+                  <a href="book.php" class="btn" style="display: inline-block;">Book a Package</a>
+               </div>
+            <?php endif; ?>
+         </div>
       </div>
-   </div>
    <?php endif; ?>
 
    <!-- footer section starts  -->
@@ -285,4 +294,5 @@ if (isset($_SESSION['user_id'])) {
    <script src="js/booking_status.js"></script>
 
 </body>
+
 </html>
