@@ -241,7 +241,7 @@ if (isset($_SESSION['user_id'])) {
                   <p style="font-size: 18px; color: #555; margin-bottom: 20px;">
                      THERE ARE NO BOOKINGS MADE, BOOK NOW!
                   </p>
-                  <a href="book.php" class="btn" style="display: inline-block;">Book a Package</a>
+                  <a href="package.php" class="btn" style="display: inline-block;">Book a Package</a>
                </div>
             <?php endif; ?>
          </div>
